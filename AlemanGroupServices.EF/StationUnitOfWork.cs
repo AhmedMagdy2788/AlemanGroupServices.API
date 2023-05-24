@@ -24,6 +24,10 @@ namespace AlemanGroupServices.EF
                 new BaseRepository<MCAccountProduct>(_dbContext);
             WithdrawalFromMarketingCompanyRepository =
                 new BaseRepository<WithdrawalFromMarketingCompany>(_dbContext);
+            OrdersQuantityRepository =
+                new BaseRepository<OrdersQuantity>(_dbContext);
+            ProductDistributionRepository =
+                new BaseRepository<ProductDistribution>(_dbContext);
             #endregion
             #region Subcopanies and Customers
             SubcompanyRepository =
@@ -34,6 +38,8 @@ namespace AlemanGroupServices.EF
                 new BaseRepository<CompanyTruck>(_dbContext);
             CompanyDriverRepository =
                 new BaseRepository<CompanyDriver>(_dbContext);
+            DestinationRegionRepository =
+                new BaseRepository<DestinationRegion>(_dbContext);
             CustomerRepository =
                 new BaseRepository<Tblcustomer>(_dbContext);
             CustomersAccountsRepository =
@@ -57,6 +63,8 @@ namespace AlemanGroupServices.EF
                 new BaseRepository<Tblproductssalesprice>(_dbContext);
             ProductsCommissionRepository =
                 new BaseRepository<Tblproductscommission>(_dbContext);
+            OilSaleRepository =
+                new BaseRepository<OilSale>(_dbContext);
             CompaniesOfProductsRepository =
                 new BaseRepository<Tblcompaniesofproduct>(_dbContext);
             #endregion
@@ -97,12 +105,15 @@ namespace AlemanGroupServices.EF
         public IBaseRepository<TransportationCompany> TransportationCompanyRepository { get; private set; }
         public IBaseRepository<CompanyTruck> CompnayTruckRepository { get; private set; }
         public IBaseRepository<CompanyDriver> CompanyDriverRepository { get; private set; }
+        public IBaseRepository<DestinationRegion> DestinationRegionRepository { get; private set; }
 
         public IBaseRepository<MarketingCompny> MarketingCompanyRepository { get; private set; }
         public IBaseRepository<AccountsInterfaces> AccountsInterfacesRepository { get; private set; }
         public IBaseRepository<MarketingCompaniesAccounts> MarketingCompaniesAccountsRepository { get; private set; }
         public IBaseRepository<MCAccountProduct> MCAccountProductRepository { get; private set; }
         public IBaseRepository<WithdrawalFromMarketingCompany> WithdrawalFromMarketingCompanyRepository { get; private set; }
+        public IBaseRepository<OrdersQuantity> OrdersQuantityRepository { get; private set; }
+        public IBaseRepository<ProductDistribution> ProductDistributionRepository { get; private set; }
 
         public IBaseRepository<Station> StationRepository { get; private set; }
         public IBaseRepository<Tbltank> TankRepository { get; private set; }
@@ -128,6 +139,8 @@ namespace AlemanGroupServices.EF
         public IBaseRepository<Tblproduct> ProductsRepository { get; private set; }
 
         public IBaseRepository<Tblproductscommission> ProductsCommissionRepository { get; private set; }
+
+        public IBaseRepository<OilSale> OilSaleRepository { get; private set; }
 
         public IBaseRepository<Tblcompaniesofproduct> CompaniesOfProductsRepository { get; private set; }
 

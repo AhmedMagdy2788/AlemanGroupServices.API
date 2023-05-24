@@ -47,7 +47,7 @@ namespace AlemanGroupServices.API.Controllers
         }
 
 
-        [HttpGet("GetById{date}/{stationName}/{productName}")]
+        [HttpGet("GetById{Date}/{stationName}/{productName}")]
         public async Task<ActionResult<TanksEquilibriumDto?>> GetById(DateTime date, string stationName, string productName)
         {
             try
@@ -84,7 +84,7 @@ namespace AlemanGroupServices.API.Controllers
 
         }
 
-        [HttpGet("getStationTanksEquilibrium{date}/{stationName}")]
+        [HttpGet("getStationTanksEquilibrium{Date}/{stationName}")]
         public async Task<ActionResult<IEnumerable<TanksEquilibriumDto>>> getStationTanksEquilibrium(DateTime date, string stationName)
         {
             try
@@ -262,7 +262,7 @@ namespace AlemanGroupServices.API.Controllers
             }
         }
 
-        [HttpDelete("DeleteTankQuantity{date}/{stationName}/{productName}")]
+        [HttpDelete("DeleteTankQuantity{Date}/{stationName}/{productName}")]
         public async Task<IActionResult> DeleteTankQuantity(DateTime date, string stationName, string productName)
         {
             try

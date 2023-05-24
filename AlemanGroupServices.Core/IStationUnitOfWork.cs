@@ -13,6 +13,8 @@ namespace AlemanGroupServices.Core
         IBaseRepository<MarketingCompaniesAccounts> MarketingCompaniesAccountsRepository { get; }
         IBaseRepository<MCAccountProduct> MCAccountProductRepository { get; }
         IBaseRepository<WithdrawalFromMarketingCompany> WithdrawalFromMarketingCompanyRepository { get; }
+        IBaseRepository<OrdersQuantity> OrdersQuantityRepository { get; }
+        IBaseRepository<ProductDistribution> ProductDistributionRepository { get; }
         #endregion
 
         #region Subcompanies and Cusotmers
@@ -20,6 +22,7 @@ namespace AlemanGroupServices.Core
         IBaseRepository<TransportationCompany> TransportationCompanyRepository { get; }
         IBaseRepository<CompanyTruck> CompnayTruckRepository { get; }
         IBaseRepository<CompanyDriver> CompanyDriverRepository { get; }
+        IBaseRepository<DestinationRegion> DestinationRegionRepository { get; }
         IBaseRepository<Tblcustomer> CustomerRepository { get; }
         IBaseRepository<TblCustomerTurck> CustomersTrucksRepository { get; }
         IBaseRepository<tblCustomersAccounts> CustomersAccountsRepository { get; }
@@ -34,7 +37,9 @@ namespace AlemanGroupServices.Core
         IBaseRepository<Tblproductscommission> ProductsCommissionRepository { get; }
         IBaseRepository<Tblproductsbuyprices> ProductsBuyPriceRepository { get; }
         IBaseRepository<Tblproductssalesprice> ProductsSalePriceRepository { get; }
+        IBaseRepository<OilSale> OilSaleRepository { get; }
         IBaseRepository<Tblcompaniesofproduct> CompaniesOfProductsRepository { get; }
+
         #endregion
 
         #region Tanks Details 

@@ -43,7 +43,7 @@ namespace AlemanGroupServices.API.Controllers
             catch (Exception ex) { return BadRequest(ex.ToString()); }
         }
 
-        [HttpGet("GetById{date}/{stationName}/{productName}")]
+        [HttpGet("GetById{Date}/{stationName}/{productName}")]
         public async Task<ActionResult<CalibrationDto?>> GetById(DateTime date, string stationName, string productName)
         {
             try
@@ -79,7 +79,7 @@ namespace AlemanGroupServices.API.Controllers
 
         }
 
-        [HttpGet("getStationCalibration{date}/{stationName}")]
+        [HttpGet("getStationCalibration{Date}/{stationName}")]
         public async Task<ActionResult<IEnumerable<CalibrationDto>>> getStationCalibration(DateTime date, string stationName)
         {
             try
@@ -251,7 +251,7 @@ namespace AlemanGroupServices.API.Controllers
             }
         }
 
-        [HttpDelete("DeleteTankQuantity{date}/{stationName}/{productName}")]
+        [HttpDelete("DeleteTankQuantity{Date}/{stationName}/{productName}")]
         public async Task<IActionResult> DeleteTankQuantity(DateTime date, string stationName, string productName)
         {
             try

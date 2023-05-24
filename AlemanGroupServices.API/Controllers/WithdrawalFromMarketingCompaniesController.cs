@@ -22,12 +22,12 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                if (_context.tblstationswithdrawals == null)
+                if (_context.Tblstationswithdrawals == null)
                 {
                     return NotFound();
                 }
                 var accountsPairs = await getAccountsNamesIdsPairs();
-                var result = await (from withdrawals in _context.tblstationswithdrawals 
+                var result = await (from withdrawals in _context.Tblstationswithdrawals 
                                     join transportationcompanies in _context.Tbltransportationcompanies on withdrawals.TransportationId equals transportationcompanies.Id
                                     join trucks in _context.Tblstationtrucks on withdrawals.TruckId equals trucks.Id
                                     join drivers in _context.Tblstationdrivers on withdrawals.DriverId equals drivers.Id
@@ -62,12 +62,12 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                if (_context.tblstationswithdrawals == null)
+                if (_context.Tblstationswithdrawals == null)
                 {
                     return NotFound();
                 }
                 var accountsPairs = await getAccountsNamesIdsPairs();
-                var result = await (from withdrawals in _context.tblstationswithdrawals
+                var result = await (from withdrawals in _context.Tblstationswithdrawals
                                     where withdrawals.AccountNo == accountNo
                                     join transportationcompanies in _context.Tbltransportationcompanies on withdrawals.TransportationId equals transportationcompanies.Id
                                     join trucks in _context.Tblstationtrucks on withdrawals.TruckId equals trucks.Id
@@ -103,12 +103,12 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                if (_context.tblstationswithdrawals == null)
+                if (_context.Tblstationswithdrawals == null)
                 {
                     return NotFound();
                 }
                 var accountsPairs = await getAccountsNamesIdsPairs();
-                var result = await (from withdrawals in _context.tblstationswithdrawals
+                var result = await (from withdrawals in _context.Tblstationswithdrawals
                                     where withdrawals.AccountNo == accountNo && withdrawals.OrderDate >= startDate && withdrawals.OrderDate <= endDate
                                     join transportationcompanies in _context.Tbltransportationcompanies on withdrawals.TransportationId equals transportationcompanies.Id
                                     join trucks in _context.Tblstationtrucks on withdrawals.TruckId equals trucks.Id
@@ -138,19 +138,17 @@ namespace AlemanGroupServices.API.Controllers
             }
         }
 
-        
-
         // GET: api/WithdrawalFromMarketingCompanies/5
         [HttpGet("{orderNo}")]
         public async Task<ActionResult<WithdrawalFromMarketingCompanyDto>> GetWithdrawalFromMarketingCompany(uint orderNo)
         {
             try
             {
-                if (_context.tblstationswithdrawals == null)
+                if (_context.Tblstationswithdrawals == null)
                 {
                     return NotFound();
                 }
-                var withdrawalFromMarketingCompany = await _context.tblstationswithdrawals.FindAsync(orderNo);
+                var withdrawalFromMarketingCompany = await _context.Tblstationswithdrawals.FindAsync(orderNo);
 
                 if (withdrawalFromMarketingCompany == null)
                 {
@@ -309,9 +307,9 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                if (_context.tblstationswithdrawals == null)
+                if (_context.Tblstationswithdrawals == null)
                 {
-                    return Problem("Entity set 'MySQLDBContext.tblstationswithdrawals'  is null.");
+                    return Problem("Entity set 'MySQLDBContext.Tblstationswithdrawals'  is null.");
                 }
                 // get the transportation company that transport the order
                 var transportationCompany = await _context.Tbltransportationcompanies
@@ -338,7 +336,7 @@ namespace AlemanGroupServices.API.Controllers
                     TruckId = companyTruck.Id,
                     DriverId = drivier!.Id
                 };
-                _context.tblstationswithdrawals.Add(withdrawalFromMarketingCompany);
+                _context.Tblstationswithdrawals.Add(withdrawalFromMarketingCompany);
                 await _context.SaveChangesAsync();
 
                 return CreatedAtAction("GetWithdrawalFromMarketingCompany", new { orderNo = withdrawalFromMarketingCompany.OrderNO }, withdrawalFromMarketingCompany);
@@ -354,15 +352,15 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                if (_context.tblstationswithdrawals == null)
+                if (_context.Tblstationswithdrawals == null)
                 {
-                    return Problem("Entity set 'MySQLDBContext.tblstationswithdrawals'  is null.");
+                    return Problem("Entity set 'MySQLDBContext.Tblstationswithdrawals'  is null.");
                 }
                 var duplicates = new List<WithdrawalFromMarketingCompanyDto>();
                 foreach (var withdrawalFromMarketingCompanyDto in withdrawalFromMarketingCompanyDtos)
                 {
                     // check if there are any duplicates withdrawals in the list based on the order no
-                    var duplicatesList = _context.tblstationswithdrawals.Where(w => w.OrderNO == withdrawalFromMarketingCompanyDto.OrderNO).ToList();
+                    var duplicatesList = _context.Tblstationswithdrawals.Where(w => w.OrderNO == withdrawalFromMarketingCompanyDto.OrderNO).ToList();
                     if (duplicatesList.Count > 0) duplicates.Add(withdrawalFromMarketingCompanyDto);
                     else
                     {
@@ -391,7 +389,7 @@ namespace AlemanGroupServices.API.Controllers
                             TruckId = companyTruck.Id,
                             DriverId = drivier!.Id
                         };
-                        _context.tblstationswithdrawals.Add(withdrawalFromMarketingCompany);
+                        _context.Tblstationswithdrawals.Add(withdrawalFromMarketingCompany);
                     }
                 }
                 await _context.SaveChangesAsync();
@@ -413,17 +411,17 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                if (_context.tblstationswithdrawals == null)
+                if (_context.Tblstationswithdrawals == null)
                 {
                     return NotFound();
                 }
-                var withdrawalFromMarketingCompany = await _context.tblstationswithdrawals.FindAsync(orderNo);
+                var withdrawalFromMarketingCompany = await _context.Tblstationswithdrawals.FindAsync(orderNo);
                 if (withdrawalFromMarketingCompany == null)
                 {
                     return NotFound();
                 }
 
-                _context.tblstationswithdrawals.Remove(withdrawalFromMarketingCompany);
+                _context.Tblstationswithdrawals.Remove(withdrawalFromMarketingCompany);
                 await _context.SaveChangesAsync();
 
                 return NoContent();
@@ -437,7 +435,7 @@ namespace AlemanGroupServices.API.Controllers
 
         private bool WithdrawalFromMarketingCompanyExists(uint orderNo)
         {
-            return (_context.tblstationswithdrawals?.Any(e => e.OrderNO == orderNo)).GetValueOrDefault();
+            return (_context.Tblstationswithdrawals?.Any(e => e.OrderNO == orderNo)).GetValueOrDefault();
         }
     }
 }

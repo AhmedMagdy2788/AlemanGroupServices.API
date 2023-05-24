@@ -23,7 +23,9 @@ namespace AlemanGroupServices.EF
         public DbSet<AccountsInterfaces> Tblaccountsinterfaces { get; set; }
         public DbSet<MarketingCompaniesAccounts> Tblmarketingcompaniesaccounts { get; set; }
         public DbSet<MCAccountProduct> Tblmarketingcompaccountsproducts { get; set; }
-        public DbSet<WithdrawalFromMarketingCompany> tblstationswithdrawals { get; set; }
+        public DbSet<WithdrawalFromMarketingCompany> Tblstationswithdrawals { get; set; }
+        public DbSet<OrdersQuantity> Tblordersquantity { get; set; }
+        public DbSet<ProductDistribution> Tblproductsdistribution { get; set; }
         public DbSet<Tblsourceregion> Tblsourceregions { get; set; }
         public DbSet<Tblwarehouse> Tblwarehouses { get; set; }
         public DbSet<Tblwarehousecost> Tblwarehousecosts { get; set; }
@@ -34,6 +36,7 @@ namespace AlemanGroupServices.EF
         public DbSet<TransportationCompany> Tbltransportationcompanies { get; set; }
         public DbSet<CompanyTruck> Tblstationtrucks { get; set; }
         public DbSet<CompanyDriver> Tblstationdrivers { get; set; }
+        public DbSet<DestinationRegion> Tbldestinationregions { get; set; }
         public DbSet<Tblcustomer> Tblcustomers { get; set; }
         public DbSet<TblCustomerTurck> TblcustomersTrucks { get; set; }
         public DbSet<tblCustomersAccounts> TblCustomersAccounts { get; set; }
@@ -48,6 +51,7 @@ namespace AlemanGroupServices.EF
         public DbSet<Tblcompaniesofproduct> Tblcompaniesofproducts { get; set; }
         public DbSet<Tblproductsbuyprices> TblProductsBuyPrice { get; set; }
         public DbSet<Tblproductssalesprice> Tblproductssalesprices { get; set; }
+        public DbSet<OilSale> Tbloilssales { get; set; }
         public DbSet<OilsSalesView> Oils_sales_view { get; set; }
         #endregion
 
@@ -113,6 +117,13 @@ namespace AlemanGroupServices.EF
                 entity.Property(e => e.LicenseNo).HasColumnName("license_no");
             });
 
+            modelBuilder.Entity<DestinationRegion>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Name).HasColumnName("unloading_regions");
+            });
+
             modelBuilder.Entity<Station>(entity =>
             {
                 entity.HasKey(e => e.Station_Id);
@@ -166,10 +177,10 @@ namespace AlemanGroupServices.EF
             modelBuilder.Entity<TanksEquilibrium>(entity =>
             {
                 entity.HasKey(e => new { e.Date, e.Station_Id, e.Product_Name });
-                entity.Property(e => e.Date).HasColumnName("date");
+                entity.Property(e => e.Date).HasColumnName("Date");
                 entity.Property(e => e.Station_Id).HasColumnName("station_id");
                 entity.Property(e => e.Product_Name).HasColumnName("product_name");
-                entity.Property(e => e.Quantity).HasColumnName("quantity");
+                entity.Property(e => e.Quantity).HasColumnName("Quantity");
                 entity.Property(e => e.Notes).HasColumnName("notes");
                 entity.HasOne<Station>()
                     .WithMany()
@@ -184,10 +195,10 @@ namespace AlemanGroupServices.EF
             modelBuilder.Entity<Calibration>(entity =>
             {
                 entity.HasKey(e => new { e.Date, e.Station_Id, e.Product_Name });
-                entity.Property(e => e.Date).HasColumnName("date");
+                entity.Property(e => e.Date).HasColumnName("Date");
                 entity.Property(e => e.Station_Id).HasColumnName("station_id");
                 entity.Property(e => e.Product_Name).HasColumnName("product_name");
-                entity.Property(e => e.Quantity).HasColumnName("quantity");
+                entity.Property(e => e.Quantity).HasColumnName("Quantity");
                 entity.HasOne<Station>()
                     .WithMany()
                     .HasForeignKey(e => e.Station_Id)
@@ -225,7 +236,7 @@ namespace AlemanGroupServices.EF
             {
                 entity.HasKey(e => e.AccountNo);
                 entity.Property(e => e.AccountNo).HasColumnName("account_no");
-                entity.Property(e => e.Date).HasColumnName("date");
+                entity.Property(e => e.Date).HasColumnName("Date");
                 entity.Property(e => e.AccountInterfaceId).HasColumnName("acount_interface_id");
                 entity.Property(e => e.MarketingCompanyId).HasColumnName("marketing_company_id");
                 entity.Property(e => e.InitialDept).HasColumnName("initial_dept");
@@ -286,6 +297,44 @@ namespace AlemanGroupServices.EF
                     .WithMany()
                     .HasForeignKey(e => e.DriverId)
                     .HasConstraintName("tblstationswithdrawals_fk5");
+            });
+
+            modelBuilder.Entity<OrdersQuantity>(entity =>
+            {
+                entity.HasKey(e => new { e.OrderNo, e.ProductId });
+                entity.Property(e => e.OrderNo).HasColumnName("order_no");
+                entity.Property(e => e.ProductId).HasColumnName("product_id");
+                entity.Property(e => e.Quantity).HasColumnName("quantity");
+                entity.HasOne<WithdrawalFromMarketingCompany>()
+                    .WithMany()
+                    .HasForeignKey(e => e.OrderNo)
+                    .HasConstraintName("tblordersquantity_fk1");
+                entity.HasOne<Tblproduct>()
+                    .WithMany()
+                    .HasForeignKey(e => e.ProductId)
+                    .HasConstraintName("tblordersquantity_fk2");
+            });
+
+            modelBuilder.Entity<ProductDistribution>(entity =>
+            {
+                entity.HasKey(e => new { e.OrderNo, e.ProductId, e.DestinationId });
+                entity.Property(e => e.Date).HasColumnName("date");
+                entity.Property(e => e.OrderNo).HasColumnName("order_no");
+                entity.Property(e => e.ProductId).HasColumnName("product_id");
+                entity.Property(e => e.DestinationId).HasColumnName("destination_id");
+                entity.Property(e => e.Quantity).HasColumnName("quantity");
+                entity.HasOne<WithdrawalFromMarketingCompany>()
+                    .WithMany()
+                    .HasForeignKey(e => e.OrderNo)
+                    .HasConstraintName("tblproductsdistribution_fk1");
+                entity.HasOne<Tblproduct>()
+                    .WithMany()
+                    .HasForeignKey(e => e.ProductId)
+                    .HasConstraintName("tblproductsdistribution_fk2");
+                entity.HasOne<DestinationRegion>()
+                    .WithMany()
+                    .HasForeignKey(e => e.DestinationId)
+                    .HasConstraintName("tblproductsdistribution_fk3");
             });
 
             modelBuilder.Entity<Tblwarehouse>(entity =>
@@ -404,14 +453,32 @@ namespace AlemanGroupServices.EF
                 //    .HasConstraintName("tblproductsbuyprices_ibfk_1");
             });
 
+            modelBuilder.Entity<OilSale>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Date).HasColumnName("Date");
+                entity.Property(e => e.StationId).HasColumnName("station_id");
+                entity.Property(e => e.OilId).HasColumnName("product_id");
+                entity.Property(e => e.Quantity).HasColumnName("quantity");
+                entity.HasOne<Station>()
+                    .WithMany()
+                    .HasForeignKey(e => e.StationId)
+                    .HasConstraintName("tbloilssales_ibfk_1");
+                entity.HasOne<Tblproduct>()
+                    .WithMany()
+                    .HasForeignKey(e => e.OilId)
+                    .HasConstraintName("tbloilssales_ibfk_2");
+            });
+
             modelBuilder.Entity<OilsSalesView>(entity =>
             {
                 entity.ToView("Oils_sales_view");
                 entity.HasNoKey();
-                entity.Property(e => e.Date).HasColumnName("date");
+                entity.Property(e => e.Date).HasColumnName("Date");
                 entity.Property(e => e.Station_Name).HasColumnName("station_name");
                 entity.Property(e => e.Product_Name).HasColumnName("product_name");
-                entity.Property(e => e.Quantity).HasColumnName("quantity");
+                entity.Property(e => e.Quantity).HasColumnName("Quantity");
                 entity.Property(e => e.product_selling_price).HasColumnName("product_selling_price");
                 entity.Property(e => e.Total_Price).HasColumnName("total_price");
             });
