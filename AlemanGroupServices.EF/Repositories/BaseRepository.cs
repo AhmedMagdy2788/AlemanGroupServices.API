@@ -27,7 +27,7 @@ namespace AlemanGroupServices.EF.Repositories
 
         public T Delete(T entity)
         {
-            _context.Set<T>().Remove( entity);
+            _context.Set<T>().Remove(entity);
             return entity;
         }
 

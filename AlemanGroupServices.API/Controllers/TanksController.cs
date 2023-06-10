@@ -3,6 +3,8 @@ using AlemanGroupServices.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using AlemanGroupServices.EF;
+using Microsoft.EntityFrameworkCore;
 
 namespace AlemanGroupServices.API.Controllers
 {
@@ -10,32 +12,67 @@ namespace AlemanGroupServices.API.Controllers
     [ApiController]
     public class TanksController : ControllerBase
     {
+        private readonly MySQLDBContext _context;
         private readonly IStationUnitOfWork
            _stationUnitOfWork;
-        public TanksController(IStationUnitOfWork stationUnitOfWork)
+        public TanksController(IStationUnitOfWork stationUnitOfWork, MySQLDBContext context)
         {
+            _context = context;
             _stationUnitOfWork = stationUnitOfWork;
         }
 
         [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                return Ok(_stationUnitOfWork.TankRepository.GetAll());
+                if (_context.Tbltanks is null)
+                {
+                    return NotFound("the table does not exist in database");
+                }
+                var result = await _context.Tbltanks
+                    .Join(_context.TblStations,
+                    tank => tank.Station_id,
+                    station => station.Station_Id,
+                    (tank, station) => new TankDTO
+                    {
+                        Tank_No = tank.Tank_No,
+                        Tank_Name = tank.Tank_Name,
+                        Station_Name = station.Station_Name,
+                        Max_Capacity = tank.Max_Capacity
+                    })
+                    .ToListAsync();
+                return Ok(result);
             }
-            catch (Exception ex) { return BadRequest(ex.ToString()); }
+            catch (Exception ex) { return Problem(ex.ToString()); }
 
         }
 
         [HttpGet("GetByTankNo")]
-        public IActionResult GetByTankNo(int tankNo)
+        public async Task<IActionResult> GetByTankNo(uint tankNo)
         {
             try
             {
-                return Ok(_stationUnitOfWork.TankRepository.GetById(tankNo));
+                if (_context.Tbltanks is null)
+                {
+                    return NotFound("the table does not exist in database");
+                }
+                var result = await _context.Tbltanks
+                    .Where(tank => tank.Tank_No == tankNo)
+                    .Join(_context.TblStations,
+                    tank => tank.Station_id,
+                    station => station.Station_Id,
+                    (tank, station) => new TankDTO
+                    {
+                        Tank_No = tank.Tank_No,
+                        Tank_Name = tank.Tank_Name,
+                        Station_Name = station.Station_Name,
+                        Max_Capacity = tank.Max_Capacity
+                    })
+                    .FirstOrDefaultAsync();
+                return Ok(result);
             }
-            catch (Exception ex) { return BadRequest(ex.ToString()); }
+            catch (Exception ex) { return Problem(ex.ToString()); }
 
         }
 
@@ -48,18 +85,7 @@ namespace AlemanGroupServices.API.Controllers
                 var tanksNoNamePairs = await _stationUnitOfWork.DataAccess.LoadData<TanksPairs, dynamic>(sql, new { });
                 return Ok(tanksNoNamePairs);
             }
-            catch (Exception ex) { return BadRequest(ex.ToString()); }
-        }
-
-        [HttpGet("GetBytankNoAsync")]
-        public async Task<IActionResult> GetByIdAsync(uint tankNo)
-        {
-            try
-            {
-                return Ok(await _stationUnitOfWork.TankRepository.GetByIdAsync(tankNo));
-            }
-            catch (Exception ex) { return BadRequest(ex.ToString()); }
-
+            catch (Exception ex) { return Problem(ex.ToString()); }
         }
 
         [HttpGet("GetByStationName")]
@@ -67,13 +93,33 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                string sql = $"CALL getStationTanks('{stationName}');";
-                var tanks = await _stationUnitOfWork.DataAccess.LoadData<TankDTO, string>(sql, stationName);
-                return Ok(tanks);
+                if (_context.Tbltanks is null)
+                {
+                    return NotFound("the table does not exist in database");
+                }
+                var station = _context.TblStations.Where(station => station.Station_Name == stationName).FirstOrDefault();
+                if (station is null) return NotFound($"There is no station with name {stationName}...");
+                var result = await _context.Tbltanks
+                    .Where(tank => tank.Station_id == station.Station_Id)
+                    .Join(_context.TblStations,
+                    tank => tank.Station_id,
+                    station => station.Station_Id,
+                    (tank, station) => new TankDTO
+                    {
+                        Tank_No = tank.Tank_No,
+                        Tank_Name = tank.Tank_Name,
+                        Station_Name = station.Station_Name,
+                        Max_Capacity = tank.Max_Capacity
+                    })
+                    .ToListAsync();
+                return Ok(result);
+                //string sql = $"CALL getStationTanks('{stationName}');";
+                //var tanks = await _stationUnitOfWork.DataAccess.LoadData<TankDTO, string>(sql, stationName);
+                //return Ok(tanks);
                 //return Ok(_stationUnitOfWork.TankRepository.FindAll(
                 //b => b.Station_id == 1));
             }
-            catch (Exception ex) { return BadRequest(ex.ToString()); }
+            catch (Exception ex) { return Problem(ex.ToString()); }
 
         }
 
@@ -86,7 +132,7 @@ namespace AlemanGroupServices.API.Controllers
                 return Ok(_stationUnitOfWork.TankRepository.FindAll(b => b.Station_id == stationId
                 , null, null, b => b.Tank_Name));
             }
-            catch (Exception ex) { return BadRequest(ex.ToString()); }
+            catch (Exception ex) { return Problem(ex.ToString()); }
         }
 
         [HttpGet("GetStationTanksOrderedByNo")]
@@ -97,7 +143,7 @@ namespace AlemanGroupServices.API.Controllers
                 return Ok(_stationUnitOfWork.TankRepository.FindAll(b => b.Station_id == 1
                 , null, null, b => b.Tank_No));
             }
-            catch (Exception ex) { return BadRequest(ex.ToString()); }
+            catch (Exception ex) { return Problem(ex.ToString()); }
         }
 
         [HttpPost("Addtank")]
@@ -116,7 +162,7 @@ namespace AlemanGroupServices.API.Controllers
                 _stationUnitOfWork.complete();
                 return Ok(new TankDTO { Tank_No = tankTemp.Tank_No, Max_Capacity = tankTemp.Max_Capacity, Station_Name = tank.Station_Name, Tank_Name = tankTemp.Tank_Name });
             }
-            catch (Exception ex) { return BadRequest(ex.ToString()); }
+            catch (Exception ex) { return Problem(ex.ToString()); }
 
         }
 
@@ -132,11 +178,11 @@ namespace AlemanGroupServices.API.Controllers
                 _stationUnitOfWork.complete();
                 return Ok(tanksIEnumable);
             }
-            catch (Exception ex) { return BadRequest(ex.ToString()); }
+            catch (Exception ex) { return Problem(ex.ToString()); }
         }
 
         [HttpPut("Updatetank")]
-        public async Task<IActionResult> Updatetank([FromBody] TankDTO tank)
+        public async Task<IActionResult> Updatetank([FromHeader] uint tankNo, [FromBody] TankDTO tank)
         {
             try
             {
@@ -153,12 +199,12 @@ namespace AlemanGroupServices.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.ToString());
+                return Problem(ex.ToString());
             }
         }
 
         [HttpDelete("Deletetank")]
-        public IActionResult Deletetank(uint tankNo)
+        public IActionResult Deletetank([FromHeader] uint tankNo)
         {
             try
             {
@@ -168,7 +214,7 @@ namespace AlemanGroupServices.API.Controllers
                 _stationUnitOfWork.complete();
                 return Ok(tankTemp);
             }
-            catch (Exception ex) { return BadRequest(ex.ToString()); }
+            catch (Exception ex) { return Problem(ex.ToString()); }
         }
 
         private async Task<Dictionary<string, int>> getStationsNameIdPairs()

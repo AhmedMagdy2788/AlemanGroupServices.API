@@ -16,6 +16,7 @@ builder.Services.AddDbContext<MySQLDBContext>(options =>
 {
     options.UseMySql(connectionString, ServerVersion.Parse("8.0.28-mysql"));
 });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSingleton<IDataAccess, DataAccess>();
 builder.Services.AddTransient<IStationUnitOfWork, StationUnitOfWork>();

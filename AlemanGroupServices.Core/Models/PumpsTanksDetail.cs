@@ -20,6 +20,16 @@ namespace AlemanGroupServices.Core.Models
         //public virtual Tbltank TankNoNavigation { get; set; } = null!;
     }
 
+    public class PumpTankDetailDto
+    {
+        public DateTime Date {get; set;}
+        public uint Pump_No {get; set;}
+        public string pump_Name { get; set; } = null!;
+        public uint Tank_No { get; set;}
+        public string Tank_Name { get; set; } = null!;
+        public string tankContentType { get; set; } = null!;
+    }
+
     public partial class PumpsCountersDailyReportDto
     {
         public PumpsTanksDetail? PumpInstallationDetails { get; set; }

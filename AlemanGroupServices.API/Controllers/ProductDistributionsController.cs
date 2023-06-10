@@ -3,9 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using AlemanGroupServices.Core.Models;
 using AlemanGroupServices.EF;
 using Microsoft.CodeAnalysis;
-using System.Collections.Generic;
-using Mysqlx;
-using System;
 
 namespace AlemanGroupServices.API.Controllers
 {
@@ -13,7 +10,7 @@ namespace AlemanGroupServices.API.Controllers
 
     //This controller provides endpoints for managing product distributions.
 
-        [Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ProductDistributionsController : ControllerBase
     {
