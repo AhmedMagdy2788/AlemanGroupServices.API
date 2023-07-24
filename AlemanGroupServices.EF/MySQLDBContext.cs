@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-
 namespace AlemanGroupServices.EF;
 
 //This class is implementing the IDesignTimeDbContextFactory<TContext> interface which is used to create a new instance of a derived DbContext class at design-time. It is used by Entity Framework Core tools (for example, dotnet ef) to create migrations and DbContext instances at design-time. 
@@ -12,21 +11,24 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<MySQLDBCo
     // This method creates and returns a new instance of the MySQLDBContext class which is derived from the DbContext class. The method takes an array of strings as an argument which can be used to pass additional parameters to the method. In this case, it is not used. 
     public MySQLDBContext CreateDbContext(string[] args)
     {
-        //IConfigurationRoot configuration = new ConfigurationBuilder()
-        //    .SetBasePath(Directory.GetCurrentDirectory())
-        //    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-        //    .Build();
-
+        IConfigurationRoot configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
         var optionsBuilder = new DbContextOptionsBuilder<MySQLDBContext>();
-        string connectionString = "server=localhost;user=root;database=aleman_db;port=3306;password=Admin@div88";
+        string connectionString = configuration.GetConnectionString("DefaultConnection");
         optionsBuilder.UseMySql(connectionString, ServerVersion.Parse("8.0.28-mysql"));
-        return new MySQLDBContext(optionsBuilder.Options);
+        return new MySQLDBContext(optionsBuilder.Options, configuration);
     }
 }
 
 public class MySQLDBContext : DbContext
 {
-    public MySQLDBContext(DbContextOptions<MySQLDBContext> options) : base(options) { }
+    private readonly IConfiguration _configuration;
+    public MySQLDBContext(DbContextOptions<MySQLDBContext> options, IConfiguration configuration) : base(options)
+    {
+        _configuration = configuration;
+    }
     #region Marketing Companies and warhouses
     public DbSet<MarketingCompny> Tblmarketingcompnies { get; set; }
     public DbSet<AccountsInterfaces> Tblaccountsinterfaces { get; set; }
@@ -92,6 +94,10 @@ public class MySQLDBContext : DbContext
         Console.WriteLine(message);
     }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseMySql(_configuration.GetConnectionString("DefaultConnection"), ServerVersion.Parse("8.0.28-mysql"));
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -100,6 +106,7 @@ public class MySQLDBContext : DbContext
         modelBuilder.Entity<Tblsubcompany>(entity =>
         {
             entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Subcompany_name).IsUnique();
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Subcompany_name).HasColumnName("Subcompany_Name");
             entity.Property(e => e.Address).HasColumnName("address");
@@ -265,10 +272,10 @@ public class MySQLDBContext : DbContext
                 .HasForeignKey(e => e.MarketingCompanyId)
                 .HasConstraintName("tblmarketingcompaniesaccounts_fk2");
         });
-        
+
         modelBuilder.Entity<MCAccountProduct>(entity =>
         {
-            entity.HasKey(e => new { e.AccountNo , e.MainProductId});
+            entity.HasKey(e => new { e.AccountNo, e.MainProductId });
             entity.Property(e => e.AccountNo).HasColumnName("account_no");
             entity.Property(e => e.MainProductId).HasColumnName("main_product_id");
             entity.HasOne<MarketingCompaniesAccounts>()

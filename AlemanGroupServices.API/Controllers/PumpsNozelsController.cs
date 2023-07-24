@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using AlemanGroupServices.Core.Models;
+using AlemanGroupServices.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using AlemanGroupServices.Core.Models;
-using AlemanGroupServices.EF;
 
 namespace AlemanGroupServices.API.Controllers
 {
@@ -25,10 +20,10 @@ namespace AlemanGroupServices.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PumpsNozels>>> Gettblpumpsnozels()
         {
-          if (_context.tblpumpsnozels == null)
-          {
-              return NotFound();
-          }
+            if (_context.tblpumpsnozels == null)
+            {
+                return NotFound();
+            }
             return await _context.tblpumpsnozels.ToListAsync();
         }
 
@@ -36,11 +31,11 @@ namespace AlemanGroupServices.API.Controllers
         [HttpGet("{pumpNo}")]
         public async Task<ActionResult<IEnumerable<PumpsNozels>>> GetPumpsNozels(uint pumpNo)
         {
-          if (_context.tblpumpsnozels == null)
-          {
-              return NotFound();
-          }
-            var pumpsNozels = await _context.tblpumpsnozels.Where(e=> e.PumpNo == pumpNo).ToListAsync();
+            if (_context.tblpumpsnozels == null)
+            {
+                return NotFound();
+            }
+            var pumpsNozels = await _context.tblpumpsnozels.Where(e => e.PumpNo == pumpNo).ToListAsync();
 
             if (pumpsNozels == null)
             {
@@ -57,7 +52,9 @@ namespace AlemanGroupServices.API.Controllers
             {
                 return NotFound();
             }
-            var pumpsNozel = await _context.tblpumpsnozels.Where(e => e.PumpNo == pumpNo && e.NozelNo == nozelNo).FirstOrDefaultAsync();
+            var pumpsNozel = await _context.tblpumpsnozels
+                .Where(e => e.PumpNo == pumpNo && e.NozelNo == nozelNo)
+                .FirstOrDefaultAsync();
 
             if (pumpsNozel == null)
             {
@@ -103,10 +100,10 @@ namespace AlemanGroupServices.API.Controllers
         [HttpPost]
         public async Task<ActionResult<PumpsNozels>> PostPumpsNozels(PumpsNozels pumpsNozels)
         {
-          if (_context.tblpumpsnozels == null)
-          {
-              return Problem("Entity set 'MySQLDBContext.tblpumpsnozels'  is null.");
-          }
+            if (_context.tblpumpsnozels == null)
+            {
+                return Problem("Entity set 'MySQLDBContext.tblpumpsnozels'  is null.");
+            }
             _context.tblpumpsnozels.Add(pumpsNozels);
             try
             {
@@ -134,7 +131,7 @@ namespace AlemanGroupServices.API.Controllers
             {
                 return NotFound();
             }
-            var pumpsNozels = await _context.tblpumpsnozels.Where(e=> e.PumpNo == pumpNo && e.NozelNo == nozelNo).FirstOrDefaultAsync();
+            var pumpsNozels = await _context.tblpumpsnozels.Where(e => e.PumpNo == pumpNo && e.NozelNo == nozelNo).FirstOrDefaultAsync();
             if (pumpsNozels == null)
             {
                 return NotFound();
@@ -146,7 +143,7 @@ namespace AlemanGroupServices.API.Controllers
             return NoContent();
         }
 
-        private bool PumpsNozelsExists(uint pumpNo , int nozelNo)
+        private bool PumpsNozelsExists(uint pumpNo, int nozelNo)
         {
             return (_context.tblpumpsnozels?.Any(e => e.PumpNo == pumpNo && e.NozelNo == nozelNo)).GetValueOrDefault();
         }

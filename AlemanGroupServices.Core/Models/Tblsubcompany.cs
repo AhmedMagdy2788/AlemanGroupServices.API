@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace AlemanGroupServices.Core.Models
 {
     public partial class Tblsubcompany
     {
-        public Tblsubcompany()
-        {
-            Tblstations = new HashSet<Station>();
-        }
+        //public Tblsubcompany()
+        //{
+        //    Tblstations = new HashSet<Station>();
+        //}
 
         [Key]
         public int Id { get; set; }
@@ -20,6 +18,6 @@ namespace AlemanGroupServices.Core.Models
         public string Fax { get; set; } = null!;
         public string Email { get; set; } = null!;
 
-        public virtual ICollection<Station> Tblstations { get; set; }
+        //public virtual ICollection<Station> Tblstations { get; set; }
     }
 }
