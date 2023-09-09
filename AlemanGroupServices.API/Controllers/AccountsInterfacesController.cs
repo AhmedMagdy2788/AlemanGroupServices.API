@@ -30,7 +30,7 @@ namespace AlemanGroupServices.API.Controllers
                     .Join(_context.Tblsubcompanies, accountInterface => accountInterface.subcompany_id, subcompany => subcompany.Id, (accountInterface, subcompany) => new AccountsInterfacesDto
                     {
                         Id = accountInterface.Id,
-                        subcompany_name = subcompany.Subcompany_name,
+                        subcompany_name = subcompany.Name,
                         accounts_interfaces = accountInterface.accounts_interfaces,
                     })
                     .ToListAsync();
@@ -56,7 +56,7 @@ namespace AlemanGroupServices.API.Controllers
                     .Join(_context.Tblsubcompanies, accountInterface => accountInterface.subcompany_id, subcompany => subcompany.Id, (accountInterface, subcompany) => new AccountsInterfacesDto
                     {
                         Id = accountInterface.Id,
-                        subcompany_name = subcompany.Subcompany_name,
+                        subcompany_name = subcompany.Name,
                         accounts_interfaces = accountInterface.accounts_interfaces,
                     }).FirstOrDefaultAsync();
 
@@ -82,10 +82,10 @@ namespace AlemanGroupServices.API.Controllers
                 {
                     return BadRequest();
                 }
-                var subcompany = await _context.Tblsubcompanies.Where(ai => ai.Subcompany_name == accountsInterfacesDto.subcompany_name).FirstOrDefaultAsync();
+                var subcompany = await _context.Tblsubcompanies.Where(ai => ai.Name == accountsInterfacesDto.subcompany_name).FirstOrDefaultAsync();
                 if (subcompany == null)
                 {
-                    return NotFound($"there is no subcopany with name '{accountsInterfacesDto.subcompany_name}'");
+                    return NotFound($"there is no subcopany with Name '{accountsInterfacesDto.subcompany_name}'");
                 }
                 _context.Entry(new AccountsInterfaces
                 {
@@ -129,10 +129,10 @@ namespace AlemanGroupServices.API.Controllers
                 {
                     return Problem("Entity set 'MySQLDBContext.Tblaccountsinterfaces'  is null.");
                 }
-                var subcompany = await _context.Tblsubcompanies.Where(ai => ai.Subcompany_name == accountsInterfacesDto.subcompany_name).FirstOrDefaultAsync();
+                var subcompany = await _context.Tblsubcompanies.Where(ai => ai.Name == accountsInterfacesDto.subcompany_name).FirstOrDefaultAsync();
                 if (subcompany == null)
                 {
-                    return NotFound($"there is no subcopany with name '{accountsInterfacesDto.subcompany_name}'");
+                    return NotFound($"there is no subcopany with Name '{accountsInterfacesDto.subcompany_name}'");
                 }
                 _context.Tblaccountsinterfaces.Add(new AccountsInterfaces
                 {

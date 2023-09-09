@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using AlemanGroupServices.Core.Const;
+﻿using AlemanGroupServices.Core.Const;
 using AlemanGroupServices.Core.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace AlemanGroupServices.EF.Repositories
@@ -34,6 +34,12 @@ namespace AlemanGroupServices.EF.Repositories
         public IEnumerable<T> AddRange(IEnumerable<T> entities)
         {
             _context.Set<T>().AddRange(entities);
+            return entities;
+        }
+
+        public async Task<IEnumerable<T>> AddRangeAsync(IEnumerable<T> entities)
+        {
+            await _context.Set<T>().AddRangeAsync(entities);
             return entities;
         }
 
@@ -82,6 +88,16 @@ namespace AlemanGroupServices.EF.Repositories
             return _context.Set<T>().ToList();
         }
 
+        public IEnumerable<T> GetRange(int range, Expression<Func<T, object>> orderBy, int offset = 0, string orderByDirection = OrderBy.Ascending)
+        {
+            IQueryable<T> query = _context.Set<T>();
+
+            if (orderByDirection == OrderBy.Ascending)
+                return query.OrderBy(orderBy).Skip(offset).Take(range).ToList();
+            else
+                return query.OrderByDescending(orderBy).Skip(offset).Take(range).ToList();
+        }
+
         public T? GetById(dynamic id)
         {
             return _context.Set<T>().Find(id);
@@ -90,6 +106,16 @@ namespace AlemanGroupServices.EF.Repositories
         public async Task<T?> GetByIdAsync(dynamic id)
         {
             return await _context.Set<T>().FindAsync(id);
+        }
+
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> match)
+        {
+            return await _context.Set<T>().AnyAsync(match);
+        }
+
+        public bool Any(Expression<Func<T, bool>> match)
+        {
+            return _context.Set<T>().Any(match);
         }
     }
 }

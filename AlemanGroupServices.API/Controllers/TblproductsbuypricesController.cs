@@ -80,7 +80,7 @@ namespace AlemanGroupServices.API.Controllers
                         .FirstOrDefault();
             if (product == null)
             {
-                return NotFound($"there is no product with this name '{product_name}'");
+                return NotFound($"there is no product with this Name '{product_name}'");
             }
 
             // Find the Tblproductsbuyprices with the specified Date and Product_Id
@@ -109,7 +109,7 @@ namespace AlemanGroupServices.API.Controllers
                        .Where(p => p.Product_Name == product_name)
                        .FirstOrDefault();
             if (product == null)
-                return NotFound($"there is no product with this name '{product_name}'");
+                return NotFound($"there is no product with this Name '{product_name}'");
             Console.WriteLine($"{product.Product_Name} is found with id = {product.Id}");
             // Find the maximum Date that is equal to or before the specified Date
             DateTime maxDate = _context.TblProductsBuyPrice
@@ -141,7 +141,7 @@ namespace AlemanGroupServices.API.Controllers
                        .FirstOrDefault();
             if (product == null)
             {
-                return NotFound($"there is no product with this name '{productName}'");
+                return NotFound($"there is no product with this Name '{productName}'");
             }
             var tblproductsbuyprices = _context.TblProductsBuyPrice
                                        .Where(p => p.Product_Id == product.Id)
@@ -169,7 +169,7 @@ namespace AlemanGroupServices.API.Controllers
         /// <summary>
         /// Add Prodcuts Purchase Prices
         /// </summary>
-        /// <param name="productsPurchasePriceDto"></param>
+        /// <param Name="productsPurchasePriceDto"></param>
         /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<Tblproductsbuyprices>> PostTblproductsbuyprice(ProductsPurchasePriceDto productsPurchasePriceDto)
@@ -209,7 +209,7 @@ namespace AlemanGroupServices.API.Controllers
                         .FirstOrDefault();
             if (product == null)
             {
-                return NotFound($"there is no product with this name '{priceWithProductNameDto.Product_Name}'");
+                return NotFound($"there is no product with this Name '{priceWithProductNameDto.Product_Name}'");
             }
 
             Tblproductsbuyprices addedPriceObject = new Tblproductsbuyprices
@@ -299,7 +299,7 @@ namespace AlemanGroupServices.API.Controllers
                         .FirstOrDefault();
             if (product == null)
             {
-                return NotFound($"there is no product with this name '{product_name}'");
+                return NotFound($"there is no product with this Name '{product_name}'");
             }
 
             var tblproductsbuyprice = await _context.TblProductsBuyPrice

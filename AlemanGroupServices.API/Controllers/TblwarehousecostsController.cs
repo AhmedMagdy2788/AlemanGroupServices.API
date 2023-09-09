@@ -80,7 +80,7 @@ namespace AlemanGroupServices.API.Controllers
             var product = await _context.TblProducts.Where(p => p.Product_Name == product_name).FirstOrDefaultAsync();
             if (product == null) 
             { 
-                return NotFound($"there is no product with name '{product_name}'"); 
+                return NotFound($"there is no product with Name '{product_name}'"); 
             }
 
             DateTime? maxDate = null;
@@ -123,7 +123,7 @@ namespace AlemanGroupServices.API.Controllers
             var product = await _context.TblProducts.Where(p => p.Product_Name == product_name).FirstOrDefaultAsync();
             if (product == null)
             {
-                return NotFound($"there is no product with name '{product_name}'");
+                return NotFound($"there is no product with Name '{product_name}'");
             }
 
             var tblwarehousecost = await _context.Tblwarehousecosts.Where(p =>  p.Product_Id == product.Id && p.Warehouse == warehouse).ToListAsync();
@@ -179,7 +179,7 @@ namespace AlemanGroupServices.API.Controllers
           var product = await _context.TblProducts.Where(p=> p.Product_Name == warehouseCostDto.Product_Name).FirstOrDefaultAsync();
             if (product == null)
             {
-                return NotFound($"there is no product exist with name '{warehouseCostDto.Product_Name}'");
+                return NotFound($"there is no product exist with Name '{warehouseCostDto.Product_Name}'");
             }
             var tblwarehousecost = new Tblwarehousecost 
             { 

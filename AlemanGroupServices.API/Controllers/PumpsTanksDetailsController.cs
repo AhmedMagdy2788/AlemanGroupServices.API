@@ -111,20 +111,20 @@ public class PumpsTanksDetailsController : ControllerBase
         }
         #region Get Station Id Name Pairs
         StationIdNamePairs? station = _context.TblStations
-            .Select(s => new StationIdNamePairs { Station_id = s.Station_Id, Station_name = s.Station_Name })
-            .Where(p => p.Station_name == stationName)
+            .Select(s => new StationIdNamePairs { Id = s.Id, Name = s.Name })
+            .Where(p => p.Name == stationName)
             .FirstOrDefault();
         if (station == null)
         {
-            return NotFound($"there is no station with this name '{stationName}'");
+            return NotFound($"there is no station with this Name '{stationName}'");
         }
-        _context.LogToConsole(station.Station_name);
+        _context.LogToConsole(station.Name);
         #endregion
 
         #region Get Station Tanks
         var stationTanks = await _context.Tbltanks
             .Select(t => new { t.Tank_No, t.Station_id })
-            .Where(t => t.Station_id == station.Station_id)
+            .Where(t => t.Station_id == station.Id)
             .ToListAsync();
         if (stationTanks == null)
         {
@@ -219,20 +219,20 @@ public class PumpsTanksDetailsController : ControllerBase
 
             #region Get Station Id Name Pairs
             StationIdNamePairs? station = _context.TblStations
-                .Select(s => new StationIdNamePairs { Station_id = s.Station_Id, Station_name = s.Station_Name })
-                .Where(p => p.Station_name == stationName)
+                .Select(s => new StationIdNamePairs { Id = s.Id, Name = s.Name })
+                .Where(p => p.Name == stationName)
                 .FirstOrDefault();
             if (station == null)
             {
-                return NotFound($"there is no station with this name '{stationName}'");
+                return NotFound($"there is no station with this Name '{stationName}'");
             }
-            _context.LogToConsole(station.Station_name);
+            _context.LogToConsole(station.Name);
             #endregion
 
             #region Get Station Tanks
             var stationTanks = await _context.Tbltanks
                 .Select(t => new { t.Tank_No, t.Station_id })
-                .Where(t => t.Station_id == station.Station_id)
+                .Where(t => t.Station_id == station.Id)
                 .ToListAsync();
             if (stationTanks == null)
             {

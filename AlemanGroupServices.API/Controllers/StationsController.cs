@@ -1,6 +1,7 @@
 ﻿using AlemanGroupServices.Core;
 using AlemanGroupServices.Core.Models;
 using AlemanGroupServices.EF;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,10 +14,12 @@ namespace AlemanGroupServices.API.Controllers
         private readonly MySQLDBContext _context;
         private readonly IStationUnitOfWork
             _stationunitOfWork;
-        public StationsController(IStationUnitOfWork stationunitOfWork, MySQLDBContext context)
+        private readonly IMapper _mapper;
+        public StationsController(IStationUnitOfWork stationunitOfWork, MySQLDBContext context, IMapper mapper)
         {
             _stationunitOfWork = stationunitOfWork;
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet("GetAll")]
@@ -26,12 +29,8 @@ namespace AlemanGroupServices.API.Controllers
             {
                 var stations = await _context.TblStations.ToListAsync();
                 return Ok(stations);
-                //string sql = "select * from tblstations_view;";
-                //var stations = await _stationunitOfWork.DataAccess.LoadData<StationDto, dynamic>(sql, new { });
-                //return Ok(stations);
-                //return Ok(_stationunitOfWork.StationRepository.GetAll());
             }
-            catch (Exception ex) { return BadRequest(ex.ToString()); }
+            catch (Exception ex) { return Problem(ex.ToString()); }
         }
 
         [HttpGet("StationName")]
@@ -39,18 +38,14 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                var station = await _context.TblStations.Where(s => s.Station_Name == stationName).FirstOrDefaultAsync();
+                var station = await _context.TblStations.Where(s => s.Name == stationName).FirstOrDefaultAsync();
                 if (station == null)
                 {
-                    return NotFound($"There is no staion with name {stationName}.");
+                    return NotFound($"There is no staion with Name {stationName}.");
                 }
                 return Ok(station);
-                //string sql = $"select * from tblstations_view where Station_Id = '{stationName}';";
-                //var stations = await _stationunitOfWork.DataAccess.LoadData<StationDto, dynamic>(sql, new { });
-                //return Ok(stations);
-                //return Ok(_stationunitOfWork.StationRepository.GetById(stationName));
             }
-            catch (Exception ex) { return BadRequest(ex.ToString()); }
+            catch (Exception ex) { return Problem(ex.ToString()); }
 
         }
 
@@ -60,23 +55,34 @@ namespace AlemanGroupServices.API.Controllers
             try
             {
                 var company = await _context.Tblsubcompanies
-                    .Where(sc => sc.Subcompany_name == ownerCompany)
+                    .Where(sc => sc.Name == ownerCompany)
                     .FirstOrDefaultAsync();
                 if (company == null)
                 {
-                    return NotFound($"There is no subcompany with name {ownerCompany}.");
+                    return NotFound($"There is no subcompany with Name {ownerCompany}.");
                 }
                 var stations = await _context.TblStations
-                    .Where(s => s.Owner_company_Id == company.Id)
+                    .Where(s => s.Owner_Company_Id == company.Id)
+                    .Join(_context.Tblsubcompanies,
+                    station => station.Owner_Company_Id,
+                    subcompany => subcompany.Id,
+                    (station, subcompany) => new { station, subcompany })
+                    .Join(_context.Tblmarketingcompnies,
+                    sc => sc.station.Partner_Ship_Id,
+                    marketingCompany => marketingCompany.Id,
+                    (sc, marketingCompany) => new StationResponseDto
+                    {
+                        Id = sc.station.Id,
+                        Name = sc.station.Name,
+                        Location = sc.station.Location,
+                        Owner_Company_Name = sc.subcompany.Name,
+                        Partner_Ship_Name = marketingCompany.Name
+                    }
+                    )
                     .ToListAsync();
                 return Ok(stations);
-                //string sql = $"select * from tblstations_view where owner_company = '{ownerCompany}';";
-                //var stations = await _stationunitOfWork.DataAccess.LoadData<StationDto, dynamic>(sql, new { });
-                //return Ok(stations);
-                //return Ok(_stationunitOfWork.StationRepository.FindAll(
-                //b => b.Owner_company == ownerCompany));
             }
-            catch (Exception ex) { return BadRequest(ex.ToString()); }
+            catch (Exception ex) { return Problem(ex.ToString()); }
 
         }
 
@@ -86,21 +92,21 @@ namespace AlemanGroupServices.API.Controllers
             try
             {
                 var company = await _context.Tblmarketingcompnies
-                    .Where(mc => mc.Marketing_comany == partnerCompany)
+                    .Where(mc => mc.Name == partnerCompany)
                     .FirstOrDefaultAsync();
                 if (company == null)
                 {
-                    return NotFound($"There is no Marketing company with name {partnerCompany}.");
+                    return NotFound($"There is no Marketing company with Name {partnerCompany}.");
                 }
                 var stations = await _context.TblStations
-                    .Where(s => s.Partner_ship_Id == company.Id)
+                    .Where(s => s.Partner_Ship_Id == company.Id)
                     .ToListAsync();
                 return Ok(stations);
                 //string sql = $"select * from tblstations_view where partner_ship = '{partnerCompany}';";
-                //var stations = await _stationunitOfWork.DataAccess.LoadData<StationDto, dynamic>(sql, new { });
+                //var stations = await _stationunitOfWork.DataAccess.LoadData<StationResponseDto, dynamic>(sql, new { });
                 //return Ok(stations);
                 //return Ok(_stationunitOfWork.StationRepository.FindAll(
-                //b => b.Partner_ship == partnerCompany));
+                //b => b.Partner_Ship_Name == partnerCompany));
             }
             catch (Exception ex) { return BadRequest(ex.ToString()); }
 
@@ -112,20 +118,32 @@ namespace AlemanGroupServices.API.Controllers
             try
             {
                 var stations = await _context.TblStations
-                    .OrderBy(s => s.Station_Id)
+                    .OrderBy(s => s.Id)
+                    .Join(_context.Tblsubcompanies,
+                    station => station.Owner_Company_Id,
+                    subcompany => subcompany.Id,
+                    (station, subcompany) => new { station, subcompany })
+                    .Join(_context.Tblmarketingcompnies,
+                    sc => sc.station.Partner_Ship_Id,
+                    marketingCompany => marketingCompany.Id,
+                    (sc, marketingCompany) => new StationResponseDto
+                    {
+                        Id = sc.station.Id,
+                        Name = sc.station.Name,
+                        Location = sc.station.Location,
+                        Owner_Company_Name = sc.subcompany.Name,
+                        Partner_Ship_Name = marketingCompany.Name
+                    }
+                    )
                     .ToListAsync();
+                //var sttionsDtos = _mapper.Map<List<StationResponseDto>>(stations);
                 return Ok(stations);
-                //string sql = $"select * from tblstations_view ORDER By station_id;";
-                //var stations = await _stationunitOfWork.DataAccess.LoadData<StationDto, dynamic>(sql, new { });
-                //return Ok(stations);
-                //return Ok(_stationunitOfWork.StationRepository.FindAll(b => true
-                //, null, null, b => b.Station_name));
             }
             catch (Exception ex) { return BadRequest(ex.ToString()); }
         }
 
         [HttpPost("AddStation")]
-        public async Task<IActionResult> Addstation([FromBody] StationDto stationDto)
+        public async Task<IActionResult> Addstation([FromBody] StationResponseDto stationDto)
         {
             try
             {
@@ -133,23 +151,23 @@ namespace AlemanGroupServices.API.Controllers
                 {
                     return Problem("Entity set 'MySQLDBContext.TblStations'  is null.");
                 }
-                var subcompany = _context.Tblsubcompanies.Where(sc => sc.Subcompany_name == stationDto.Owner_company).FirstOrDefault();
-                if (subcompany == null) { return NotFound($"There is no Owner Company with name {stationDto.Owner_company}"); }
-                MarketingCompny? marketingCompny = null;
-                if (stationDto.Partner_ship != null)
+                var subcompany = _context.Tblsubcompanies.Where(sc => sc.Name == stationDto.Owner_Company_Name).FirstOrDefault();
+                if (subcompany == null) { return NotFound($"There is no Owner Company with Name {stationDto.Owner_Company_Name}"); }
+                MarketingCompany? marketingCompny = null;
+                if (stationDto.Partner_Ship_Name != null)
                 {
-                    marketingCompny = _context.Tblmarketingcompnies.Where(mc => mc.Marketing_comany == stationDto.Partner_ship).FirstOrDefault();
+                    marketingCompny = _context.Tblmarketingcompnies.Where(mc => mc.Name == stationDto.Partner_Ship_Name).FirstOrDefault();
                     if (marketingCompny == null)
                     {
-                        return NotFound($"There is no Partner company with name {stationDto.Partner_ship}");
+                        return NotFound($"There is no Partner company with Name {stationDto.Partner_Ship_Name}");
                     }
                 }
                 var addedStation = _context.TblStations.Add(new Station
                 {
-                    Station_Name = stationDto.Station_name,
+                    Name = stationDto.Name,
                     Location = stationDto.Location,
-                    Owner_company_Id = subcompany.Id,
-                    Partner_ship_Id = marketingCompny != null ? marketingCompny.Id : null
+                    Owner_Company_Id = subcompany.Id,
+                    Partner_Ship_Id = marketingCompny != null ? marketingCompny.Id : null
                 }).Entity;
                 try
                 {
@@ -157,7 +175,7 @@ namespace AlemanGroupServices.API.Controllers
                 }
                 catch (DbUpdateException)
                 {
-                    if (await isStationExists(stationDto.Station_name))
+                    if (await isStationExists(stationDto.Name))
                     {
                         return Conflict();
                     }
@@ -172,7 +190,7 @@ namespace AlemanGroupServices.API.Controllers
         }
 
         [HttpPost("AddRangeOfstations")]
-        public async Task<IActionResult> AddRangeOfstations([FromBody] List<StationDto> stations)
+        public async Task<IActionResult> AddRangeOfstations([FromBody] List<StationResponseDto> stations)
         {
             try
             {
@@ -182,19 +200,19 @@ namespace AlemanGroupServices.API.Controllers
                 }
 
                 var addedStations = new List<Station>();
-                var addedStationsDto = new List<StationDto>();
-                var duplicateStationsDto = new List<StationDto>();
-                var conflictStationsDto = new List<StationDto>();
-                var incompatableStationsDto = new List<StationDto>();
+                var addedStationsDto = new List<StationResponseDto>();
+                var duplicateStationsDto = new List<StationResponseDto>();
+                var conflictStationsDto = new List<StationResponseDto>();
+                var incompatableStationsDto = new List<StationResponseDto>();
 
                 foreach (var stationDto in stations)
                 {
-                    if (addedStationsDto.Any(e => e.Station_name == stationDto.Station_name))
+                    if (addedStationsDto.Any(e => e.Name == stationDto.Name))
                     {
                         duplicateStationsDto.Add(stationDto);
                         continue;
                     }
-                    var subcompany = _context.Tblsubcompanies.Where(sc => sc.Subcompany_name == stationDto.Owner_company).FirstOrDefault();
+                    var subcompany = _context.Tblsubcompanies.Where(sc => sc.Name == stationDto.Owner_Company_Name).FirstOrDefault();
 
                     if (subcompany == null)
                     {
@@ -202,11 +220,11 @@ namespace AlemanGroupServices.API.Controllers
                         continue;
                     }
 
-                    MarketingCompny? marketingCompny = null;
+                    MarketingCompany? marketingCompny = null;
 
-                    if (stationDto.Partner_ship != null)
+                    if (stationDto.Partner_Ship_Name != null)
                     {
-                        marketingCompny = _context.Tblmarketingcompnies.Where(mc => mc.Marketing_comany == stationDto.Partner_ship).FirstOrDefault();
+                        marketingCompny = _context.Tblmarketingcompnies.Where(mc => mc.Name == stationDto.Partner_Ship_Name).FirstOrDefault();
 
                         if (marketingCompny == null)
                         {
@@ -215,7 +233,7 @@ namespace AlemanGroupServices.API.Controllers
                         }
                     }
 
-                    var existingStation = _context.TblStations.Where(s => s.Station_Name == stationDto.Station_name).FirstOrDefault();
+                    var existingStation = _context.TblStations.Where(s => s.Name == stationDto.Name).FirstOrDefault();
 
                     if (existingStation != null)
                     {
@@ -225,10 +243,10 @@ namespace AlemanGroupServices.API.Controllers
 
                     var addedStation = _context.TblStations.Add(new Station
                     {
-                        Station_Name = stationDto.Station_name,
+                        Name = stationDto.Name,
                         Location = stationDto.Location,
-                        Owner_company_Id = subcompany.Id,
-                        Partner_ship_Id = marketingCompny != null ? marketingCompny.Id : null
+                        Owner_Company_Id = subcompany.Id,
+                        Partner_Ship_Id = marketingCompny != null ? marketingCompny.Id : null
                     }).Entity;
                     if (addedStation != null)
                     {
@@ -245,7 +263,7 @@ namespace AlemanGroupServices.API.Controllers
                 {
                     foreach (var addedStation in addedStationsDto)
                     {
-                        if (await isStationExists(addedStation.Station_name))
+                        if (await isStationExists(addedStation.Name))
                         {
                             conflictStationsDto.Add(addedStation);
                         }
@@ -255,15 +273,15 @@ namespace AlemanGroupServices.API.Controllers
                 var result = new
                 {
                     AddedStations = addedStationsDto.Join(addedStations,
-                    dto => dto.Station_name,
-                    station => station.Station_Name,
-                    (dto, station) => new StationDto
+                    dto => dto.Name,
+                    station => station.Name,
+                    (dto, station) => new StationResponseDto
                     {
-                        Station_id = station.Station_Id,
-                        Station_name = dto.Station_name,
+                        Id = station.Id,
+                        Name = dto.Name,
                         Location = dto.Location,
-                        Owner_company = dto.Owner_company,
-                        Partner_ship = dto.Partner_ship,
+                        Owner_Company_Name = dto.Owner_Company_Name,
+                        Partner_Ship_Name = dto.Partner_Ship_Name,
                     }).ToList(),
                     DuplicateStations = duplicateStationsDto,
                     ConflictStations = conflictStationsDto,
@@ -279,25 +297,25 @@ namespace AlemanGroupServices.API.Controllers
             //try
             //{
             //    string sql =
-            //"insert into tblstations(Station_Id, location, owner_company, partner_ship) ";
-            //    stations.ForEach(b => sql += $"values ('{b.Station_name}', {b.Station_id}, '{b.Location}', '{b.Owner_company}', null),");
+            //"insert into tblstations(Id, location, owner_company, partner_ship) ";
+            //    stations.ForEach(b => sql += $"values ('{b.Name}', {b.Id}, '{b.Location}', '{b.Owner_Company_Name}', null),");
             //    sql = sql.Remove(sql.Length - 1, 1);
             //    Console.WriteLine(sql);
-            //    await _stationunitOfWork.DataAccess.SaveData<List<StationDto>>(sql, stations);
+            //    await _stationunitOfWork.DataAccess.SaveData<List<StationResponseDto>>(sql, stations);
             //    return Ok(stations);
             //}
             //catch (Exception ex) { return BadRequest(ex.ToString()); }
         }
 
         [HttpPut("Updatestation")]
-        public async Task<IActionResult> Updatestation([FromBody] StationDto station)
+        public async Task<IActionResult> Updatestation([FromBody] StationResponseDto station)
         {
             try
             {
-                //string sql = "UPDATE tblstations SET  station_id= @Station_id, location = @Location, owner_company = @Owner_company, partner_ship = @Partner_ship WHERE Station_name = @Station_name;";
-                string sql = "CALL update_station(@Station_name, @Station_id, @Location, @Owner_company, @Partner_ship)";
+                //string sql = "UPDATE tblstations SET  station_id= @Id, location = @Location, owner_company = @Owner_Company_Name, partner_ship = @Partner_Ship_Name WHERE Name = @Name;";
+                string sql = "CALL update_station(@Name, @Id, @Location, @Owner_Company_Name, @Partner_Ship_Name)";
                 Console.WriteLine(sql);
-                await _stationunitOfWork.DataAccess.SaveData<StationDto>(sql, station);
+                await _stationunitOfWork.DataAccess.SaveData<StationResponseDto>(sql, station);
                 return Ok(station);
                 //var stationTemp = _stationunitOfWork.StationRepository.Update(station);
                 //_stationunitOfWork.complete();
@@ -314,11 +332,11 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                string sql = $"DELETE FROM tblstations WHERE Station_Id = '{stationName}'";
+                string sql = $"DELETE FROM tblstations WHERE Id = '{stationName}'";
                 Console.WriteLine(sql);
                 await _stationunitOfWork.DataAccess.SaveData<string>(sql, stationName);
                 return Ok(stationName);
-                //StationDto? station = _stationunitOfWork.StationRepository.Find(b => b.Station_name == stationName);
+                //StationResponseDto? station = _stationunitOfWork.StationRepository.Find(b => b.Name == stationName);
                 //if (station == null) return Ok(false);
                 //var stationTemp = _stationunitOfWork.StationRepository.Delete(station);
                 //_stationunitOfWork.complete();
@@ -329,7 +347,7 @@ namespace AlemanGroupServices.API.Controllers
 
         private async Task<bool> isStationExists(string station_name)
         {
-            var station = _context.TblStations.Where(s => s.Station_Name == station_name).FirstOrDefault();
+            var station = _context.TblStations.Where(s => s.Name == station_name).FirstOrDefault();
             if (station != null) return true;
             return false;
         }

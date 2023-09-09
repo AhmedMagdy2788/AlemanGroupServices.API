@@ -8,7 +8,7 @@ namespace AlemanGroupServices.Core
         IDataAccess DataAccess { get; }
         //MySQLDBContext DbContext { get; }
         #region Marketing Companies and Warehouses
-        IBaseRepository<MarketingCompny> MarketingCompanyRepository { get; }
+        IBaseRepository<MarketingCompany> MarketingCompanyRepository { get; }
         IBaseRepository<AccountsInterfaces> AccountsInterfacesRepository { get; }
         IBaseRepository<MarketingCompaniesAccounts> MarketingCompaniesAccountsRepository { get; }
         IBaseRepository<MCAccountProduct> MCAccountProductRepository { get; }
@@ -18,7 +18,7 @@ namespace AlemanGroupServices.Core
         #endregion
 
         #region Subcompanies and Cusotmers
-        IBaseRepository<Tblsubcompany> SubcompanyRepository { get; }
+        IBaseRepository<Subcompany> SubcompanyRepository { get; }
         IBaseRepository<TransportationCompany> TransportationCompanyRepository { get; }
         IBaseRepository<CompanyTruck> CompnayTruckRepository { get; }
         IBaseRepository<CompanyDriver> CompanyDriverRepository { get; }

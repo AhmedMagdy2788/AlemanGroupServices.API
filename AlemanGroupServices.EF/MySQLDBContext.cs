@@ -30,7 +30,7 @@ public class MySQLDBContext : DbContext
         _configuration = configuration;
     }
     #region Marketing Companies and warhouses
-    public DbSet<MarketingCompny> Tblmarketingcompnies { get; set; }
+    public DbSet<MarketingCompany> Tblmarketingcompnies { get; set; }
     public DbSet<AccountsInterfaces> Tblaccountsinterfaces { get; set; }
     public DbSet<MarketingCompaniesAccounts> Tblmarketingcompaniesaccounts { get; set; }
     public DbSet<MCAccountProduct> Tblmarketingcompaccountsproducts { get; set; }
@@ -43,7 +43,7 @@ public class MySQLDBContext : DbContext
     #endregion
 
     #region Subcompanies and Customers
-    public DbSet<Tblsubcompany> Tblsubcompanies { get; set; }
+    public DbSet<Subcompany> Tblsubcompanies { get; set; }
     public DbSet<TransportationCompany> Tbltransportationcompanies { get; set; }
     public DbSet<CompanyTruck> Tblstationtrucks { get; set; }
     public DbSet<CompanyDriver> Tblstationdrivers { get; set; }
@@ -103,18 +103,31 @@ public class MySQLDBContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Tblsubcompany>(entity =>
+        modelBuilder.Entity<Subcompany>(entity =>
         {
             entity.HasKey(e => e.Id);
-            entity.HasIndex(e => e.Subcompany_name).IsUnique();
+            entity.HasIndex(e => e.Name).IsUnique();
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Subcompany_name).HasColumnName("Subcompany_Name");
+            entity.Property(e => e.Name).HasColumnName("Subcompany_Name");
             entity.Property(e => e.Address).HasColumnName("address");
-            entity.Property(e => e.Tax_card).HasColumnName("tax_card");
-            entity.Property(e => e.Commercial_registration).HasColumnName("commercial_registration");
+            entity.Property(e => e.TaxCard).HasColumnName("tax_card");
+            entity.Property(e => e.CommercialRegistration).HasColumnName("commercial_registration");
             entity.Property(e => e.Fax).HasColumnName("fax");
             entity.Property(e => e.Email).HasColumnName("email");
         });
+
+        modelBuilder.Entity<MarketingCompany>(
+            entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.Name).IsUnique();
+                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Name).HasColumnName("name");
+                entity.Property(e => e.Address).HasColumnName("address");
+                entity.Property(e => e.Phone).HasColumnName("phone");
+                entity.Property(e => e.Fax).HasColumnName("fax");
+                entity.Property(e => e.Email).HasColumnName("email");
+            });
 
         modelBuilder.Entity<TransportationCompany>(entity =>
         {
@@ -149,18 +162,18 @@ public class MySQLDBContext : DbContext
 
         modelBuilder.Entity<Station>(entity =>
         {
-            entity.HasKey(e => e.Station_Id);
-            entity.Property(e => e.Station_Id).HasColumnName("station_id");
-            entity.Property(e => e.Station_Name).HasColumnName("station_name");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("station_id");
+            entity.Property(e => e.Name).HasColumnName("station_name");
             entity.Property(e => e.Location).HasColumnName("location");
-            entity.Property(e => e.Owner_company_Id).HasColumnName("owner_company_id");
-            entity.Property(e => e.Partner_ship_Id).HasColumnName("partner_ship_id");
-            entity.HasOne<Tblsubcompany>()
+            entity.Property(e => e.Owner_Company_Id).HasColumnName("owner_company_id");
+            entity.Property(e => e.Partner_Ship_Id).HasColumnName("partner_ship_id");
+            entity.HasOne<Subcompany>()
                 .WithMany()
-                .HasForeignKey(e => e.Owner_company_Id).HasConstraintName("tblstations_ibfk_1");
-            entity.HasOne<MarketingCompny>()
+                .HasForeignKey(e => e.Owner_Company_Id).HasConstraintName("tblstations_ibfk_1");
+            entity.HasOne<MarketingCompany>()
                 .WithMany()
-                .HasForeignKey(e => e.Partner_ship_Id).HasConstraintName("tblstations_ibfk_2");
+                .HasForeignKey(e => e.Partner_Ship_Id).HasConstraintName("tblstations_ibfk_2");
         });
 
         modelBuilder.Entity<Tbltank>(entity =>
@@ -246,7 +259,7 @@ public class MySQLDBContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.accounts_interfaces).HasColumnName("accounts_interfaces");
             entity.Property(e => e.subcompany_id).HasColumnName("subcompany_id");
-            entity.HasOne<Tblsubcompany>()
+            entity.HasOne<Subcompany>()
                 .WithMany()
                 .HasForeignKey(e => e.subcompany_id)
                 .HasConstraintName("tblaccountsinterfaces_fk1");
@@ -267,7 +280,7 @@ public class MySQLDBContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.AccountInterfaceId)
                 .HasConstraintName("tblmarketingcompaniesaccounts_fk1");
-            entity.HasOne<MarketingCompny>()
+            entity.HasOne<MarketingCompany>()
                 .WithMany()
                 .HasForeignKey(e => e.MarketingCompanyId)
                 .HasConstraintName("tblmarketingcompaniesaccounts_fk2");
@@ -366,7 +379,7 @@ public class MySQLDBContext : DbContext
             entity.Property(e => e.Warehouse).HasColumnName("warehouse");
             entity.Property(e => e.Warehouse_Region_Id).HasColumnName("warehouse_region_id");
             entity.Property(e => e.Marketing_Company_Id).HasColumnName("marketing_company_id");
-            entity.HasOne<MarketingCompny>()
+            entity.HasOne<MarketingCompany>()
                 .WithMany()
                 .HasForeignKey(e => e.Marketing_Company_Id)
                 .HasConstraintName("tblwarehouses_ibfk_1");
@@ -422,7 +435,7 @@ public class MySQLDBContext : DbContext
             entity.HasOne<Tblproduct>()
                 .WithMany()
                 .HasForeignKey(e => e.Product_Id);
-            entity.HasOne<MarketingCompny>()
+            entity.HasOne<MarketingCompany>()
                 .WithMany()
                 .HasForeignKey(e => e.Source_Company_Id);
             //entity.HasOne(d => d.ProductNavigation)

@@ -78,7 +78,7 @@ namespace AlemanGroupServices.API.Controllers
                         .FirstOrDefault();
             if (product == null)
             {
-                return NotFound($"there is no product with this name '{product_name}'");
+                return NotFound($"there is no product with this Name '{product_name}'");
             }
 
             // Find the Tblproductssalesprices with the specified Date and Product_Id
@@ -107,7 +107,7 @@ namespace AlemanGroupServices.API.Controllers
                        .Where(p => p.Product_Name == product_name)
                        .FirstOrDefault();
             if (product == null)
-                return NotFound($"there is no product with this name '{product_name}'");
+                return NotFound($"there is no product with this Name '{product_name}'");
             Console.WriteLine($"{product.Product_Name} is found with id = {product.Id}");
             // Find the maximum Date that is equal to or before the specified Date
             DateTime maxDate = _context.Tblproductssalesprices
@@ -139,7 +139,7 @@ namespace AlemanGroupServices.API.Controllers
                        .FirstOrDefault();
             if (product == null)
             {
-                return NotFound($"there is no product with this name '{productName}'");
+                return NotFound($"there is no product with this Name '{productName}'");
             }
             var tblproductssaleprices = _context.Tblproductssalesprices
                 .Where(p => p.Product_Id == product.Id)
@@ -233,7 +233,7 @@ namespace AlemanGroupServices.API.Controllers
                         .FirstOrDefault();
             if (product == null)
             {
-                return NotFound($"there is no product with this name '{priceWithProductNameDto.Product_Name}'");
+                return NotFound($"there is no product with this Name '{priceWithProductNameDto.Product_Name}'");
             }
 
             Tblproductssalesprice addedPriceObject = new Tblproductssalesprice
@@ -323,7 +323,7 @@ namespace AlemanGroupServices.API.Controllers
                         .FirstOrDefault();
             if (product == null)
             {
-                return NotFound($"there is no product with this name '{product_name}'");
+                return NotFound($"there is no product with this Name '{product_name}'");
             }
 
             var tblproductssaleprice = _context.Tblproductssalesprices

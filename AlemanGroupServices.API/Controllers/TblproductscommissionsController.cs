@@ -58,7 +58,7 @@ namespace AlemanGroupServices.API.Controllers
                 return NotFound();
             }
             var product = await _context.TblProducts.Where(p => p.Product_Name == product_name).FirstOrDefaultAsync();
-            if (product == null) { return NotFound($"there is no product with name '{product_name}'"); }
+            if (product == null) { return NotFound($"there is no product with Name '{product_name}'"); }
             return await _context.Tblproductscommission
                 .Where(p => p.Product_Id == product.Id)
                 .Join(
@@ -101,7 +101,7 @@ namespace AlemanGroupServices.API.Controllers
                 return NotFound();
             }
             var product = await _context.TblProducts.Where(p=> p.Product_Name == product_name).FirstOrDefaultAsync(); 
-            if (product == null) { return  NotFound($"there is no product with name '{product_name}'"); }
+            if (product == null) { return  NotFound($"there is no product with Name '{product_name}'"); }
             DateTime? maxDate = null;
             var products = _context.Tblproductscommission
                 .Where(p => p.Date <= date && p.Product_Id == product.Id);
@@ -168,7 +168,7 @@ namespace AlemanGroupServices.API.Controllers
                 .FirstOrDefaultAsync();
             if (product == null)
             {
-                return NotFound($"there is no product with name '{tblproductscommissionDto.Product_Name}'");
+                return NotFound($"there is no product with Name '{tblproductscommissionDto.Product_Name}'");
             }
 
             _context.Entry(new Tblproductscommission 
@@ -239,7 +239,7 @@ namespace AlemanGroupServices.API.Controllers
                 .FirstOrDefaultAsync();
             if (product == null)
             {
-                return NotFound($"there is no product with name '{tblproductscommissionDto.Product_Name}'");
+                return NotFound($"there is no product with Name '{tblproductscommissionDto.Product_Name}'");
             }
 
             var tblproductscommission = new Tblproductscommission
@@ -302,7 +302,7 @@ namespace AlemanGroupServices.API.Controllers
                 .FirstOrDefaultAsync();
             if (product == null)
             {
-                return NotFound($"there is no product with name '{product_name}'");
+                return NotFound($"there is no product with Name '{product_name}'");
             }
             var tblproductscommission = await _context.Tblproductscommission.Where(e => e.Date == date && e.Product_Id == product.Id).FirstOrDefaultAsync();
             if (tblproductscommission == null)

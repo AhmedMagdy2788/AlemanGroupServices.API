@@ -66,7 +66,7 @@ namespace AlemanGroupServices.API.Controllers
             var category = _context.Tblmainproducts.FirstOrDefault(c=> c.Products_Category == category_name);
             if(category == null)
             {
-                return NotFound($"there is no category name like this '{category_name}'");
+                return NotFound($"there is no category Name like this '{category_name}'");
             }
             var products = await _context.TblProducts
                 .Where(p => p.Category_Id == category.CategoryId)
@@ -125,8 +125,8 @@ namespace AlemanGroupServices.API.Controllers
         /// <summary>
         /// PUT: api/Tblproducts/5
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="tblproduct"></param>
+        /// <param Name="id"></param>
+        /// <param Name="tblproduct"></param>
         /// <returns></returns>
        
         [HttpPut("{id}")]
@@ -161,7 +161,7 @@ namespace AlemanGroupServices.API.Controllers
         /// <summary>
         /// POST: api/Tblproducts
         /// </summary>
-        /// <param name="product"></param>
+        /// <param Name="product"></param>
         /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<Tblproduct>> PostTblproduct(PureProductDto product)
@@ -213,7 +213,7 @@ namespace AlemanGroupServices.API.Controllers
         /// <summary>
         /// DELETE: api/Tblproducts/5
         /// </summary>
-        /// <param name="id"></param>
+        /// <param Name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTblproduct(int id)

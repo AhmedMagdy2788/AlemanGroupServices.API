@@ -53,7 +53,7 @@ namespace AlemanGroupServices.API.Controllers
                 var readingsRows= await _stationUnitOfWork.DataAccess.LoadData<DigitalCountersReads, dynamic>(sql, registeration_date);
                 return Ok(readingsRows);
                 //return Ok(_stationUnitOfWork.StationRepository.FindAll(
-                //b => b.Owner_company == ownerCompany));
+                //b => b.Owner_Company_Name == ownerCompany));
             }
             catch (Exception ex) { return BadRequest(ex.ToString()); }
 
@@ -68,7 +68,7 @@ namespace AlemanGroupServices.API.Controllers
                 var readingsRows= await _stationUnitOfWork.DataAccess.LoadData<DigitalCountersReads, dynamic>(sql, new { });
                 return Ok(readingsRows);
                 //return Ok(_stationUnitOfWork.StationRepository.FindAll(
-                //b => b.Partner_ship == partnerCompany));
+                //b => b.Partner_Ship_Name == partnerCompany));
             }
             catch (Exception ex) { return BadRequest(ex.ToString()); }
 
@@ -83,7 +83,7 @@ namespace AlemanGroupServices.API.Controllers
                 var readingsRows= await _stationUnitOfWork.DataAccess.LoadData<DigitalCountersReads, dynamic>(sql, new { });
                 return Ok(readingsRows);
                 //return Ok(_stationUnitOfWork.StationRepository.FindAll(b => true
-                //, null, null, b => b.Station_name));
+                //, null, null, b => b.Name));
             }
             catch (Exception ex) { return BadRequest(ex.ToString()); }
         }
@@ -97,7 +97,7 @@ namespace AlemanGroupServices.API.Controllers
                 var readingsRows = await _stationUnitOfWork.DataAccess.LoadData<DigitalCountersReads, dynamic>(sql, new { });
                 return Ok(readingsRows);
                 //return Ok(_stationUnitOfWork.StationRepository.FindAll(b => true
-                //, null, null, b => b.Station_name));
+                //, null, null, b => b.Name));
             }
             catch (Exception ex) { return BadRequest(ex.ToString()); }
         }
@@ -164,7 +164,7 @@ namespace AlemanGroupServices.API.Controllers
                 Console.WriteLine(sql);
                 await _stationUnitOfWork.DataAccess.SaveData<DigitalCountersReads>(sql, counterReading);
                 return Ok(counterReading);
-                //DigitalCountersReads? station = _stationUnitOfWork.StationRepository.Find(b => b.Station_name == counterNo);
+                //DigitalCountersReads? station = _stationUnitOfWork.StationRepository.Find(b => b.Name == counterNo);
                 //if (station == null) return Ok(false);
                 //var stationTemp = _stationUnitOfWork.StationRepository.Delete(station);
                 //_stationUnitOfWork.complete();

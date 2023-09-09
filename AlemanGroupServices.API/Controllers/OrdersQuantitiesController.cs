@@ -62,7 +62,7 @@ namespace AlemanGroupServices.API.Controllers
                     return NotFound();
                 }
                 Tblproduct? product = _context.TblProducts.Where(p => p.Product_Name == productName).FirstOrDefault();
-                if (product == null) return NotFound("there is no product with that name");
+                if (product == null) return NotFound("there is no product with that Name");
                 var ordersQuantityDto = await _context.Tblordersquantity
                     .Where(oq => oq.OrderNo == orderNo && oq.ProductId == product.Id)
                     .Join(_context.TblProducts,
@@ -78,7 +78,7 @@ namespace AlemanGroupServices.API.Controllers
 
                 if (ordersQuantityDto == null)
                 {
-                    return NotFound($"there is no orderQuantity stored with order no '{orderNo}' and product name '{productName}'");
+                    return NotFound($"there is no orderQuantity stored with order no '{orderNo}' and product Name '{productName}'");
                 }
                 return ordersQuantityDto;
 
@@ -137,7 +137,7 @@ namespace AlemanGroupServices.API.Controllers
                     return BadRequest();
                 }
                 Tblproduct? product = _context.TblProducts.Where(p => p.Product_Name == productName).FirstOrDefault();
-                if (product == null) return NotFound("there is no product with that name");
+                if (product == null) return NotFound("there is no product with that Name");
                 var ordersQuantity = await _context.Tblordersquantity
                     .Where(oq => oq.OrderNo == orderNo && oq.ProductId == product.Id)
                     .Join(_context.TblProducts,
@@ -153,7 +153,7 @@ namespace AlemanGroupServices.API.Controllers
 
                 if (ordersQuantity == null)
                 {
-                    return NotFound($"there is no orderQuantity stored with order no '{orderNo}' and product name '{productName}'");
+                    return NotFound($"there is no orderQuantity stored with order no '{orderNo}' and product Name '{productName}'");
                 }
 
                 _context.Entry(ordersQuantity).State = EntityState.Modified;
@@ -166,7 +166,7 @@ namespace AlemanGroupServices.API.Controllers
                 {
                     if (!OrdersQuantityExists(orderNo, product.Id))
                     {
-                        return NotFound($"there is no orderQuantity stored with order no '{orderNo}' and product name '{productName}'");
+                        return NotFound($"there is no orderQuantity stored with order no '{orderNo}' and product Name '{productName}'");
                     }
                     else
                     {
@@ -198,7 +198,7 @@ namespace AlemanGroupServices.API.Controllers
                 Tblproduct? product = _context.TblProducts
                        .Where(p => p.Product_Name == ordersQuantityDto.ProductName)
                        .FirstOrDefault();
-                if (product == null) return NotFound("there is no product with that name");
+                if (product == null) return NotFound("there is no product with that Name");
                 var ordersQuantity = new OrdersQuantity
                 {
                     OrderNo = ordersQuantityDto.OrderNo,
@@ -317,13 +317,13 @@ namespace AlemanGroupServices.API.Controllers
                 Tblproduct? product = _context.TblProducts
                        .Where(p => p.Product_Name == productName)
                        .FirstOrDefault();
-                if (product == null) return NotFound("there is no product with that name");
+                if (product == null) return NotFound("there is no product with that Name");
                 var ordersQuantity = await _context.Tblordersquantity
                     .Where(oq => oq.ProductId == product.Id && oq.OrderNo == orderNo)
                     .FirstOrDefaultAsync();
                 if (ordersQuantity == null)
                 {
-                    return NotFound($"there is no orderQuantity stored with order no '{orderNo}' and product name '{productName}'");
+                    return NotFound($"there is no orderQuantity stored with order no '{orderNo}' and product Name '{productName}'");
                 }
 
                 _context.Tblordersquantity.Remove(ordersQuantity);

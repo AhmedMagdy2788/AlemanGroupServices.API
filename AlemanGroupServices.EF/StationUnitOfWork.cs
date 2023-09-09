@@ -15,7 +15,7 @@ namespace AlemanGroupServices.EF
             _dbContext = dbContext;
             #region Marketing Companies
             MarketingCompanyRepository =
-                new BaseRepository<MarketingCompny>(_dbContext);
+                new BaseRepository<MarketingCompany>(_dbContext);
             AccountsInterfacesRepository =
                 new BaseRepository<AccountsInterfaces>(_dbContext);
             MarketingCompaniesAccountsRepository =
@@ -31,7 +31,7 @@ namespace AlemanGroupServices.EF
             #endregion
             #region Subcopanies and Customers
             SubcompanyRepository =
-                new BaseRepository<Tblsubcompany>(_dbContext);
+                new BaseRepository<Subcompany>(_dbContext);
             TransportationCompanyRepository =
                 new BaseRepository<TransportationCompany>(_dbContext);
             CompnayTruckRepository =
@@ -101,13 +101,13 @@ namespace AlemanGroupServices.EF
             #endregion
         }
 
-        public IBaseRepository<Tblsubcompany> SubcompanyRepository { get; private set; }
+        public IBaseRepository<Subcompany> SubcompanyRepository { get; private set; }
         public IBaseRepository<TransportationCompany> TransportationCompanyRepository { get; private set; }
         public IBaseRepository<CompanyTruck> CompnayTruckRepository { get; private set; }
         public IBaseRepository<CompanyDriver> CompanyDriverRepository { get; private set; }
         public IBaseRepository<DestinationRegion> DestinationRegionRepository { get; private set; }
 
-        public IBaseRepository<MarketingCompny> MarketingCompanyRepository { get; private set; }
+        public IBaseRepository<MarketingCompany> MarketingCompanyRepository { get; private set; }
         public IBaseRepository<AccountsInterfaces> AccountsInterfacesRepository { get; private set; }
         public IBaseRepository<MarketingCompaniesAccounts> MarketingCompaniesAccountsRepository { get; private set; }
         public IBaseRepository<MCAccountProduct> MCAccountProductRepository { get; private set; }

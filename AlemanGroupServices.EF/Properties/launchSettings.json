@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "AlemanGroupServices.EF": {
+      "commandName": "Project",
+      "nativeDebugging": true,
+      "sqlDebugging": true
+    }
+  }
+}

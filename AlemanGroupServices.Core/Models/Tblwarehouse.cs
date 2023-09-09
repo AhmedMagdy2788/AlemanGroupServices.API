@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace AlemanGroupServices.Core.Models
 {
@@ -8,7 +6,7 @@ namespace AlemanGroupServices.Core.Models
     {
         [Key]
         public string Warehouse { get; set; } = null!;
-        public int Marketing_Company_Id { get; set; } 
+        public Guid Marketing_Company_Id { get; set; }
         public int Warehouse_Region_Id { get; set; }
 
         //public virtual MarketingCompany MarketingCompanyNavigation { get; set; } = null!;

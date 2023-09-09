@@ -29,11 +29,11 @@ namespace AlemanGroupServices.API.Controllers
                     .Join(
                     _context.TblStations,
                     tankEquilibrium => tankEquilibrium.Station_Id,
-                    station => station.Station_Id,
+                    station => station.Id,
                     (tankEquilibrium, station) => new CalibrationDto
                     {
                         Date = tankEquilibrium.Date,
-                        Station_Name = station.Station_Name,
+                        Station_Name = station.Name,
                         Product_Name = tankEquilibrium.Product_Name,
                         Quantity = tankEquilibrium.Quantity
                     })
@@ -48,10 +48,10 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                var station = await _context.TblStations.Select(s => new { s.Station_Id, s.Station_Name }).Where(s => s.Station_Name == stationName).FirstOrDefaultAsync();
+                var station = await _context.TblStations.Select(s => new { s.Id, s.Name }).Where(s => s.Station_Name == stationName).FirstOrDefaultAsync();
                 if (station == null)
                 {
-                    return BadRequest($"there no station with name '{stationName}'");
+                    return BadRequest($"there no station with Name '{stationName}'");
                 }
                 var entity = await _context.Tblcalibration
                     .Where(
@@ -59,7 +59,7 @@ namespace AlemanGroupServices.API.Controllers
                     .Join(
                     _context.TblStations,
                     tankEquilibrium => tankEquilibrium.Station_Id,
-                    station => station.Station_Id,
+                    station => station.Id,
                     (tankEquilibrium, station) => new CalibrationDto
                     {
                         Date = tankEquilibrium.Date,
@@ -84,15 +84,15 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                var station = await _context.TblStations.Select(s => new { s.Station_Id, s.Station_Name }).Where(s => s.Station_Name == stationName).FirstOrDefaultAsync();
+                var station = await _context.TblStations.Select(s => new { s.Id, s.Name }).Where(s => s.Station_Name == stationName).FirstOrDefaultAsync();
                 if (station == null)
                 {
-                    return BadRequest($"there no station with name '{stationName}'");
+                    return BadRequest($"there no station with Name '{stationName}'");
                 }
                 var entitiesList = await _context.Tblcalibration.Where(c => c.Date == date && c.Station_Id == station.Station_Id).Join(
                     _context.TblStations,
                     tankEquilibrium => tankEquilibrium.Station_Id,
-                    station => station.Station_Id,
+                    station => station.Id,
                     (tankEquilibrium, station) => new CalibrationDto
                     {
                         Date = tankEquilibrium.Date,
@@ -113,11 +113,11 @@ namespace AlemanGroupServices.API.Controllers
                 var entitiesList = await _context.Tblcalibration.Where(c => c.Product_Name == productName).Join(
                    _context.TblStations,
                    tankEquilibrium => tankEquilibrium.Station_Id,
-                   station => station.Station_Id,
+                   station => station.Id,
                    (tankEquilibrium, station) => new CalibrationDto
                    {
                        Date = tankEquilibrium.Date,
-                       Station_Name = station.Station_Name,
+                       Station_Name = station.Name,
                        Product_Name = tankEquilibrium.Product_Name,
                        Quantity = tankEquilibrium.Quantity
                    }).ToListAsync();
@@ -131,15 +131,15 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                var station = await _context.TblStations.Select(s => new { s.Station_Id, s.Station_Name }).Where(s => s.Station_Name == stationName).FirstOrDefaultAsync();
+                var station = await _context.TblStations.Select(s => new { s.Id, s.Name }).Where(s => s.Station_Name == stationName).FirstOrDefaultAsync();
                 if (station == null)
                 {
-                    return BadRequest($"there no station with name '{stationName}'");
+                    return BadRequest($"there no station with Name '{stationName}'");
                 }
                 var entitiesList = await _context.Tblcalibration.Where(c => c.Station_Id == station.Station_Id).Join(
                     _context.TblStations,
                     tankEquilibrium => tankEquilibrium.Station_Id,
-                    station => station.Station_Id,
+                    station => station.Id,
                     (tankEquilibrium, station) => new CalibrationDto
                     {
                         Date = tankEquilibrium.Date,
@@ -176,10 +176,10 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                var station = await _context.TblStations.Select(s => new { s.Station_Id, s.Station_Name }).Where(s => s.Station_Name == tankDto.Station_Name).FirstOrDefaultAsync();
+                var station = await _context.TblStations.Select(s => new { s.Id, s.Name }).Where(s => s.Station_Name == tankDto.Station_Name).FirstOrDefaultAsync();
                 if (station == null)
                 {
-                    return BadRequest($"there no station with name '{tankDto.Station_Name}'");
+                    return BadRequest($"there no station with Name '{tankDto.Station_Name}'");
                 }
                 var tankTemp = _stationUnitOfWork.CalibrationRepository.Add(new Calibration
                 {
@@ -200,18 +200,18 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                List<StationIdNamePairs> stationsIdNamePairs = await _context.TblStations.Select(s => new StationIdNamePairs { Station_id = s.Station_Id, Station_name = s.Station_Name }).ToListAsync();
+                List<StationIdNamePairs> stationsIdNamePairs = await _context.TblStations.Select(s => new StationIdNamePairs { Id = s.Id, Name = s.Name }).ToListAsync();
 
                 List<Calibration> calibrationList = new List<Calibration>();
                 tanksDtos.ForEach(b =>
                 {
-                    if (stationsIdNamePairs.Any(e => e.Station_name == b.Station_Name))
+                    if (stationsIdNamePairs.Any(e => e.Name == b.Station_Name))
                     {
-                        var stationPair = stationsIdNamePairs.Where(e => e.Station_name == b.Station_Name).FirstOrDefault();
+                        var stationPair = stationsIdNamePairs.Where(e => e.Name == b.Station_Name).FirstOrDefault();
                         calibrationList.Add(new Calibration
                         {
                             Date = b.Date,
-                            Station_Id = stationPair!.Station_id,
+                            Station_Id = stationPair!.Id,
                             Product_Name = b.Product_Name,
                             Quantity = b.Quantity
                         });
@@ -230,10 +230,10 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                var station = await _context.TblStations.Select(s => new { s.Station_Id, s.Station_Name }).Where(s => s.Station_Name == tankDto.Station_Name).FirstOrDefaultAsync();
+                var station = await _context.TblStations.Select(s => new { s.Id, s.Name }).Where(s => s.Station_Name == tankDto.Station_Name).FirstOrDefaultAsync();
                 if (station == null)
                 {
-                    return BadRequest($"there no station with name '{tankDto.Station_Name}'");
+                    return BadRequest($"there no station with Name '{tankDto.Station_Name}'");
                 }
                 var tankTemp = _stationUnitOfWork.CalibrationRepository.Update(new Calibration
                 {
@@ -256,10 +256,10 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                var station = await _context.TblStations.Select(s => new { s.Station_Id, s.Station_Name }).Where(s => s.Station_Name == stationName).FirstOrDefaultAsync();
+                var station = await _context.TblStations.Select(s => new { s.Id, s.Name }).Where(s => s.Station_Name == stationName).FirstOrDefaultAsync();
                 if (station == null)
                 {
-                    return BadRequest($"there no station with name '{stationName}'");
+                    return BadRequest($"there no station with Name '{stationName}'");
                 }
                 Calibration? tank = _stationUnitOfWork.CalibrationRepository.Find(b => b.Product_Name == productName && b.Date == date && b.Station_Id == station.Station_Id);
                 if (tank == null) return Ok(false);

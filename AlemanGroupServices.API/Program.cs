@@ -1,4 +1,5 @@
 using AlemanGroupServices.Core;
+using AlemanGroupServices.Core.Models;
 using AlemanGroupServices.Core.Repositories;
 using AlemanGroupServices.EF;
 using AlemanGroupServices.EF.Repositories;
@@ -21,6 +22,8 @@ builder.Services.AddDbContext<MySQLDBContext>(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddSingleton<IDataAccess, DataAccess>();
 builder.Services.AddTransient<IStationUnitOfWork, StationUnitOfWork>();
+builder.Services.AddAutoMapper(typeof(StationMapper));
+builder.Services.AddAutoMapper(typeof(MarketingCompanyMapper));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AlemanGroupServices.Core.Models
 {
@@ -13,7 +13,7 @@ namespace AlemanGroupServices.Core.Models
         [Key]
         [Column(Order = 2)]
         [ForeignKey("MarketingCompany")]
-        public int Source_Company_Id { get; set; }
+        public Guid Source_Company_Id { get; set; }
 
         //public virtual Tblproduct ProductNameNavigation { get; set; } = null!;
         //public virtual MarketingCompany SourceCompanyNavigation { get; set; } = null!;

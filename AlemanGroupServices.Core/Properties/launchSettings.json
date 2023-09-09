@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "AlemanGroupServices.Core": {
+      "commandName": "Project",
+      "nativeDebugging": true,
+      "sqlDebugging": true
+    }
+  }
+}

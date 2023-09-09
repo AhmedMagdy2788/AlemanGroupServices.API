@@ -208,8 +208,8 @@ namespace AlemanGroupServices.API.Controllers
                         Date = MCAccountAInterface.MCAccount.Date,
                         AccountsInterface = MCAccountAInterface.AInterface.accounts_interfaces,
                         InitialDept = MCAccountAInterface.MCAccount.InitialDept,
-                        Subcompany_Name = _context.Tblsubcompanies.Where(p => p.Id == MCAccountAInterface.AInterface.subcompany_id).Select(p => p.Subcompany_name).FirstOrDefault()!,
-                        MarketingCompany = marketingCompany.Marketing_comany
+                        Subcompany_Name = _context.Tblsubcompanies.Where(p => p.Id == MCAccountAInterface.AInterface.subcompany_id).Select(p => p.Name).FirstOrDefault()!,
+                        MarketingCompany = marketingCompany.Name
                     }).ToListAsync();
             var result = new List<MarketingCompaniesAccountsPair>();
             foreach (var mCAcountDto in accounts)
@@ -251,14 +251,14 @@ namespace AlemanGroupServices.API.Controllers
                 var transportationCompany = await _context.Tbltransportationcompanies
                     .Where(tc => tc.TransportContractors == withdrawalFromMarketingCompanyDto.TransportationName)
                     .FirstOrDefaultAsync();
-                if (transportationCompany == null) return NotFound($"there is no transportation company with name '{withdrawalFromMarketingCompanyDto.TransportationName}'");
+                if (transportationCompany == null) return NotFound($"there is no transportation company with Name '{withdrawalFromMarketingCompanyDto.TransportationName}'");
                 //get the company truck for the order
                 var companyTruck = await _context.Tblstationtrucks.Where(t => t.CompanyTruckNo == withdrawalFromMarketingCompanyDto.TruckNumber).FirstOrDefaultAsync();
                 if (companyTruck == null) return NotFound($"there is no company truck with nomber '{withdrawalFromMarketingCompanyDto.TruckNumber}'");
 
                 // get the driver that drive the order truck
                 var drivier = await _context.Tblstationdrivers.Where(d => d.DriverName == withdrawalFromMarketingCompanyDto.DriverName).FirstOrDefaultAsync();
-                if (drivier == null) NotFound($"There is no driver with name '{withdrawalFromMarketingCompanyDto.DriverName}'");
+                if (drivier == null) NotFound($"There is no driver with Name '{withdrawalFromMarketingCompanyDto.DriverName}'");
 
                 var withdrawalFromMarketingCompany = new WithdrawalFromMarketingCompany
                 {
@@ -315,14 +315,14 @@ namespace AlemanGroupServices.API.Controllers
                 var transportationCompany = await _context.Tbltransportationcompanies
                     .Where(tc=> tc.TransportContractors == withdrawalFromMarketingCompanyDto.TransportationName)
                     .FirstOrDefaultAsync();
-                if (transportationCompany == null)  return NotFound($"there is no transportation company with name '{withdrawalFromMarketingCompanyDto.TransportationName}'");
+                if (transportationCompany == null)  return NotFound($"there is no transportation company with Name '{withdrawalFromMarketingCompanyDto.TransportationName}'");
                 //get the company truck for the order
                 var companyTruck = await _context.Tblstationtrucks.Where(t => t.CompanyTruckNo == withdrawalFromMarketingCompanyDto.TruckNumber).FirstOrDefaultAsync();
                 if (companyTruck == null) return NotFound($"there is no company truck with nomber '{withdrawalFromMarketingCompanyDto.TruckNumber}'");
 
                 // get the driver that drive the order truck
                 var drivier = await _context.Tblstationdrivers.Where(d=> d.DriverName == withdrawalFromMarketingCompanyDto.DriverName).FirstOrDefaultAsync();
-                if (drivier == null) NotFound($"There is no driver with name '{withdrawalFromMarketingCompanyDto.DriverName}'");
+                if (drivier == null) NotFound($"There is no driver with Name '{withdrawalFromMarketingCompanyDto.DriverName}'");
 
                 var withdrawalFromMarketingCompany = new WithdrawalFromMarketingCompany
                 {
@@ -368,14 +368,14 @@ namespace AlemanGroupServices.API.Controllers
                         var transportationCompany = await _context.Tbltransportationcompanies
                             .Where(tc => tc.TransportContractors == withdrawalFromMarketingCompanyDto.TransportationName)
                             .FirstOrDefaultAsync();
-                        if (transportationCompany == null) return NotFound($"there is no transportation company with name '{withdrawalFromMarketingCompanyDto.TransportationName}'");
+                        if (transportationCompany == null) return NotFound($"there is no transportation company with Name '{withdrawalFromMarketingCompanyDto.TransportationName}'");
                         //get the company truck for the order
                         var companyTruck = await _context.Tblstationtrucks.Where(t => t.CompanyTruckNo == withdrawalFromMarketingCompanyDto.TruckNumber).FirstOrDefaultAsync();
                         if (companyTruck == null) return NotFound($"there is no company truck with nomber '{withdrawalFromMarketingCompanyDto.TruckNumber}'");
 
                         // get the driver that drive the order truck
                         var drivier = await _context.Tblstationdrivers.Where(d => d.DriverName == withdrawalFromMarketingCompanyDto.DriverName).FirstOrDefaultAsync();
-                        if (drivier == null) NotFound($"There is no driver with name '{withdrawalFromMarketingCompanyDto.DriverName}'");
+                        if (drivier == null) NotFound($"There is no driver with Name '{withdrawalFromMarketingCompanyDto.DriverName}'");
 
                         var withdrawalFromMarketingCompany = new WithdrawalFromMarketingCompany
                         {

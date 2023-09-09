@@ -58,9 +58,9 @@ namespace AlemanGroupServices.API.Controllers
 
 
         // `GET /api/ProductDistributions/GetByDestinationNameWithIntervalTime`
-        //        Returns a list of product distributions for a specific destination name within a specified date range.
+        //        Returns a list of product distributions for a specific destination Name within a specified date range.
         // ### Parameters ###
-        //      * `destinationName` (string, required): The name of the destination to filter by.
+        //      * `destinationName` (string, required): The Name of the destination to filter by.
         //      * `startDate` (DateTime, required): The start date of the date range to filter by.
         //      * `endDate` (DateTime, required): The end date of the date range to filter by.
         // ### Response ###
@@ -140,10 +140,10 @@ namespace AlemanGroupServices.API.Controllers
                     return NotFound();
                 }
                 var product = _context.TblProducts.Where(p => p.Product_Name == productName).FirstOrDefault();
-                if (product == null) { return NotFound($"There is no product with name '{productName}'"); }
+                if (product == null) { return NotFound($"There is no product with Name '{productName}'"); }
 
                 var destination = _context.Tbldestinationregions.Where(dr => dr.Name == destinationName).FirstOrDefault();
-                if (destination == null) { return NotFound($"There is no destination name '{destinationName}'"); }
+                if (destination == null) { return NotFound($"There is no destination Name '{destinationName}'"); }
 
                 var productDistribution = await _context.Tblproductsdistribution
                     .Where(pd => pd.OrderNo == orderNo && pd.ProductId == product.Id && pd.DestinationId == destination.Id).FirstOrDefaultAsync();
@@ -181,10 +181,10 @@ namespace AlemanGroupServices.API.Controllers
                 }
 
                 var product = _context.TblProducts.Where(p => p.Product_Name == productDistributionDto.ProductName).FirstOrDefault();
-                if (product == null) { return NotFound($"There is no product with name '{productName}'"); }
+                if (product == null) { return NotFound($"There is no product with Name '{productName}'"); }
 
                 var destination = _context.Tbldestinationregions.Where(dr => dr.Name == productDistributionDto.DestinationName).FirstOrDefault();
-                if (destination == null) { return NotFound($"There is no destination name '{destinationName}'"); }
+                if (destination == null) { return NotFound($"There is no destination Name '{destinationName}'"); }
 
                 var productDistribution = new ProductDistribution
                 {
@@ -237,10 +237,10 @@ namespace AlemanGroupServices.API.Controllers
                     return Problem("Entity set 'MySQLDBContext.Tblproductsdistribution'  is null.");
                 }
                 var product = _context.TblProducts.Where(p => p.Product_Name == productDistributionDto.ProductName).FirstOrDefault();
-                if (product == null) { return NotFound($"There is no product with name '{productDistributionDto.ProductName}'"); }
+                if (product == null) { return NotFound($"There is no product with Name '{productDistributionDto.ProductName}'"); }
 
                 var destination = _context.Tbldestinationregions.Where(dr => dr.Name == productDistributionDto.DestinationName).FirstOrDefault();
-                if (destination == null) { return NotFound($"There is no destination name '{productDistributionDto.DestinationName}'"); }
+                if (destination == null) { return NotFound($"There is no destination Name '{productDistributionDto.DestinationName}'"); }
 
                 var productDistribution = new ProductDistribution
                 {
@@ -371,10 +371,10 @@ namespace AlemanGroupServices.API.Controllers
                 }
 
                 var product = _context.TblProducts.Where(p => p.Product_Name == productName).FirstOrDefault();
-                if (product == null) { return NotFound($"There is no product with name '{productName}'"); }
+                if (product == null) { return NotFound($"There is no product with Name '{productName}'"); }
 
                 var destination = _context.Tbldestinationregions.Where(dr => dr.Name == destinationName).FirstOrDefault();
-                if (destination == null) { return NotFound($"There is no destination name '{destinationName}'"); }
+                if (destination == null) { return NotFound($"There is no destination Name '{destinationName}'"); }
 
                 var productDistribution = await _context.Tblproductsdistribution
                     .Where(pd => pd.OrderNo == orderNo && pd.ProductId == product.Id && pd.DestinationId == destination.Id)
@@ -409,11 +409,11 @@ namespace AlemanGroupServices.API.Controllers
 
 ### `GET /api/ProductDistributions/GetByDestinationNameTillDateGroupedByProductName`
 
-Returns a list of product distributions for a specific destination name grouped by product name until a specified date.
+Returns a list of product distributions for a specific destination Name grouped by product Name until a specified date.
 
 #### Parameters
 
-- `destinationName` (string, required): The name of the destination to filter by.
+- `destinationName` (string, required): The Name of the destination to filter by.
 - `tillDate` (DateTime, required): The end date to filter by.
 
 #### Response
@@ -422,27 +422,27 @@ Returns a list of product distributions for a specific destination name grouped 
 
 ### `GET /api/ProductDistributions/{orderNo}/{productName}/{destinationName}`
 
-Returns a single product distribution for a specific order number, product name, and destination name.
+Returns a single product distribution for a specific order number, product Name, and destination Name.
 
 #### Parameters
 
 - `orderNo` (uint, required): The order number to filter by.
-- `productName` (string, required): The name of the product to filter by.
-- `destinationName` (string, required): The name of the destination to filter by.
+- `productName` (string, required): The Name of the product to filter by.
+- `destinationName` (string, required): The Name of the destination to filter by.
 
 #### Response
 
 - `200 OK`: A successful response will return a JSON object representing the requested product distribution.
-- `404 Not Found`: If no product distribution is found for the specified order number, product name, and destination name.
+- `404 Not Found`: If no product distribution is found for the specified order number, product Name, and destination Name.
 
 ### `PUT /api/ProductDistributions/{orderNo}/{productName}/{destinationName}`
 
-Updates an existing product distribution for a specific order number, product name, and destination name.
+Updates an existing product distribution for a specific order number, product Name, and destination Name.
 
 #### Parameters
 
 - `orderNo` (uint, required): The order number to update.
-- `productName` (string, required): The name of the product to update.
-- `destinationName` (string, required): The name of the destination to update.
+- `productName` (string, required): The Name of the product to update.
+- `destinationName` (string, required): The Name of the destination to update.
 - `
 */

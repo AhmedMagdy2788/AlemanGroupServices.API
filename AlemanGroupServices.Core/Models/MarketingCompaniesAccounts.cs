@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AlemanGroupServices.Core.Models
 {
@@ -16,7 +11,7 @@ namespace AlemanGroupServices.Core.Models
         [ForeignKey("AccountsInterfaces")]
         public int AccountInterfaceId { get; set; }
         [ForeignKey("MarketingCompany")]
-        public int MarketingCompanyId { get; set; }
+        public Guid MarketingCompanyId { get; set; }
         public double InitialDept { get; set; }
     }
 

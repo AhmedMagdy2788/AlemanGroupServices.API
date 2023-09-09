@@ -1,7 +1,5 @@
 ﻿using AlemanGroupServices.Core;
 using AlemanGroupServices.Core.Models;
-using AlemanGroupServices.EF;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AlemanGroupServices.API.Controllers
@@ -10,9 +8,6 @@ namespace AlemanGroupServices.API.Controllers
     [ApiController]
     public class SubcompaniesController : ControllerBase
     {
-        //private readonly IBaseRepository<Tblsubcompany>
-        //    _tblSubcompaniesRepository;
-
         private readonly IStationUnitOfWork
             _stationUnitOfWork;
         public SubcompaniesController(IStationUnitOfWork stationunitOfWork)
@@ -48,24 +43,11 @@ namespace AlemanGroupServices.API.Controllers
             try
             {
                 return Ok(_stationUnitOfWork.SubcompanyRepository.Find(
-                    (subcompany) => subcompany.Subcompany_name == subcompanyName));
+                    (subcompany) => subcompany.Name == subcompanyName));
             }
             catch (Exception ex) { return BadRequest(ex.ToString()); }
 
         }
-
-
-        //[HttpGet("GetByStationName")]
-        //public IActionResult GetByStationName(String stationName)
-        //{
-        //    try
-        //    {
-        //        return Ok(_stationUnitOfWork.SubcompanyRepository.FindAll(
-        //        b => b.Station_Name == stationName));
-        //    }
-        //    catch (Exception ex) { return BadRequest(ex.ToString()); }
-
-        //}
 
         [HttpGet("GetSubcompaniesOrderedByName")]
         public IActionResult GetSubcompaniesOrderedByName()
@@ -73,24 +55,13 @@ namespace AlemanGroupServices.API.Controllers
             try
             {
                 return Ok(_stationUnitOfWork.SubcompanyRepository.FindAll(b => true
-                , null, null, b => b.Subcompany_name));
+                , null, null, b => b.Name));
             }
             catch (Exception ex) { return BadRequest(ex.ToString()); }
         }
 
-        //[HttpGet("GetStationTanksOrderedByNo")]
-        //public IActionResult GetTanksOrderedByNo(string stationName)
-        //{
-        //    try
-        //    {
-        //        return Ok(_stationUnitOfWork.SubcompanyRepository.FindAll(b => b.Station_Name == stationName
-        //        , null, null, b => b.Tank_No));
-        //    }
-        //    catch (Exception ex) { return BadRequest(ex.ToString()); }
-        //}
-
         [HttpPost("Addsubcompany")]
-        public IActionResult Addsubcompany([FromBody] Tblsubcompany subcompany)
+        public IActionResult Addsubcompany([FromBody] Subcompany subcompany)
         {
             try
             {
@@ -103,11 +74,11 @@ namespace AlemanGroupServices.API.Controllers
         }
 
         [HttpPost("AddRangeOfsubcompanys")]
-        public IActionResult AddRangeOfsubcompanys([FromBody] List<Tblsubcompany> subcompanys)
+        public IActionResult AddRangeOfsubcompanys([FromBody] List<Subcompany> subcompanys)
         {
             try
             {
-                List<Tblsubcompany> fullsubcompanys = new List<Tblsubcompany>();
+                List<Subcompany> fullsubcompanys = new List<Subcompany>();
                 subcompanys.ForEach(b => fullsubcompanys.Add(b));
                 var subcompanysIEnumable = _stationUnitOfWork.SubcompanyRepository.AddRange(subcompanys);
                 _stationUnitOfWork.complete();
@@ -117,7 +88,7 @@ namespace AlemanGroupServices.API.Controllers
         }
 
         [HttpPut("Updatesubcompany")]
-        public IActionResult Updatesubcompany([FromBody] Tblsubcompany subcompany)
+        public IActionResult Updatesubcompany([FromBody] Subcompany subcompany)
         {
             try
             {
@@ -136,7 +107,7 @@ namespace AlemanGroupServices.API.Controllers
         {
             try
             {
-                Tblsubcompany? subcompany = _stationUnitOfWork.SubcompanyRepository.Find(b => b.Subcompany_name == subcompanyName);
+                Subcompany? subcompany = _stationUnitOfWork.SubcompanyRepository.Find(b => b.Name == subcompanyName);
                 if (subcompany == null) return Ok(false);
                 var subcompanyTemp = _stationUnitOfWork.SubcompanyRepository.Delete(subcompany);
                 _stationUnitOfWork.complete();

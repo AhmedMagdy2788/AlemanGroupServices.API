@@ -80,7 +80,7 @@ namespace AlemanGroupServices.API.Controllers
                 var customers = await _stationunitOfWork.DataAccess.LoadData<Tblcustomer, dynamic>(sql, new { });
                 return Ok(customers);
 
-                //List<int> ids = await getStationCusotmersIds(Station_Id);
+                //List<int> ids = await getStationCusotmersIds(Id);
                 //return Ok(_stationunitOfWork.CustomerRepository.FindAll(
                 //    b => ids.Contains(b.Id)));
             }
@@ -154,13 +154,13 @@ namespace AlemanGroupServices.API.Controllers
             }
         }
 
-        //Task<List<int>> getStationCusotmersIds(string Station_Id)
+        //Task<List<int>> getStationCusotmersIds(string Id)
         //{
         //    try
         //    {
         //        //string sql = "select * from tblstations;";
         //        //var stations = await _stationunitOfWork.DataAccess.LoadData<Station, dynamic>(sql, new { });
-        //        List<tblCustomersAccounts?> customerAccounts = _stationunitOfWork.CustomersAccountsRepository.FindAll(b => b.Accounts_Interfaces == Station_Id).ToList();
+        //        List<tblCustomersAccounts?> customerAccounts = _stationunitOfWork.CustomersAccountsRepository.FindAll(b => b.Accounts_Interfaces == Id).ToList();
             
         //        List<int> ids = new();
         //        foreach (var account in customerAccounts)

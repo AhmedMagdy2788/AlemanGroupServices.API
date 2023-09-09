@@ -13,7 +13,7 @@ namespace AlemanGroupServices.Core.Models
     {
         [Key]
         public int Id { get; set; }
-        [ForeignKey("Tblsubcompany")]
+        [ForeignKey("Subcompany")]
         public int subcompany_id { get; set; }
         public string accounts_interfaces { get; set; } = null!;
     }

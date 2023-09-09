@@ -40,8 +40,8 @@ public class MarketingCompaniesAccountsController : ControllerBase
                     Date = MCAccountAInterface.MCAccount.Date,
                     AccountsInterface = MCAccountAInterface.AInterface.accounts_interfaces,
                     InitialDept = MCAccountAInterface.MCAccount.InitialDept,
-                    Subcompany_Name = _context.Tblsubcompanies.Where(p => p.Id == MCAccountAInterface.AInterface.subcompany_id).Select(p => p.Subcompany_name).FirstOrDefault()!,
-                    MarketingCompany = marketingCompany.Marketing_comany
+                    Subcompany_Name = _context.Tblsubcompanies.Where(p => p.Id == MCAccountAInterface.AInterface.subcompany_id).Select(p => p.Name).FirstOrDefault()!,
+                    MarketingCompany = marketingCompany.Name
                 }).ToListAsync();
 
             var result = new List<MarketingCompaniesAccountsPair>();
@@ -88,7 +88,7 @@ public class MarketingCompaniesAccountsController : ControllerBase
             {
                 return NotFound();
             }
-            var subcompaniesPairs = _context.Tblsubcompanies.Select(sc => new { sc.Id, sc.Subcompany_name }).ToList();
+            var subcompaniesPairs = _context.Tblsubcompanies.Select(sc => new { sc.Id, sc.Name }).ToList();
 
             var result = await (from a in _context.Tblmarketingcompaniesaccounts
                                 join b in _context.Tblaccountsinterfaces on a.AccountInterfaceId equals b.Id
@@ -102,9 +102,9 @@ public class MarketingCompaniesAccountsController : ControllerBase
                                     InitialDept = a.InitialDept,
                                     Subcompany_Name = _context.Tblsubcompanies
                                     .Where(p => p.Id == b.subcompany_id)
-                                    .Select(p => p.Subcompany_name)
+                                    .Select(p => p.Name)
                                     .FirstOrDefault()!,
-                                    MarketingCompany = c.Marketing_comany
+                                    MarketingCompany = c.Name
                                 }
                          ).ToListAsync();
             return result;
@@ -136,8 +136,8 @@ public class MarketingCompaniesAccountsController : ControllerBase
                                     Date = a.Date,
                                     AccountsInterface = b.accounts_interfaces,
                                     InitialDept = a.InitialDept,
-                                    Subcompany_Name = _context.Tblsubcompanies.Where(p => p.Id == b.subcompany_id).Select(p => p.Subcompany_name).FirstOrDefault()!,
-                                    MarketingCompany = c.Marketing_comany
+                                    Subcompany_Name = _context.Tblsubcompanies.Where(p => p.Id == b.subcompany_id).Select(p => p.Name).FirstOrDefault()!,
+                                    MarketingCompany = c.Name
                                 }).FirstOrDefaultAsync();
             if (result == null)
             {
@@ -161,22 +161,22 @@ public class MarketingCompaniesAccountsController : ControllerBase
             return BadRequest();
         }
 
-        var marketingCompany = await _context.Tblmarketingcompnies.Where(x => x.Marketing_comany == marketingCompaniesAccountsDto.MarketingCompany).FirstOrDefaultAsync();
+        var marketingCompany = await _context.Tblmarketingcompnies.Where(x => x.Name == marketingCompaniesAccountsDto.MarketingCompany).FirstOrDefaultAsync();
         if (marketingCompany == null)
         {
-            return NotFound($"there is no Marketing Company whith name '{marketingCompaniesAccountsDto.MarketingCompany}'");
+            return NotFound($"there is no Marketing Company whith Name '{marketingCompaniesAccountsDto.MarketingCompany}'");
         }
 
-        var subcompnay = await _context.Tblsubcompanies.Where(sc => sc.Subcompany_name == marketingCompaniesAccountsDto.Subcompany_Name).FirstOrDefaultAsync();
+        var subcompnay = await _context.Tblsubcompanies.Where(sc => sc.Name == marketingCompaniesAccountsDto.Subcompany_Name).FirstOrDefaultAsync();
         if (subcompnay == null)
         {
-            return NotFound($"there is no subcompany whith name '{marketingCompaniesAccountsDto.Subcompany_Name}'");
+            return NotFound($"there is no subcompany whith Name '{marketingCompaniesAccountsDto.Subcompany_Name}'");
         }
 
         var accountInterface = await _context.Tblaccountsinterfaces.Where(ai => ai.subcompany_id == subcompnay.Id && ai.accounts_interfaces == marketingCompaniesAccountsDto.AccountsInterface).FirstOrDefaultAsync();
         if (accountInterface == null)
         {
-            return NotFound($"there is no account interface with subcompany name '{marketingCompaniesAccountsDto.Subcompany_Name}' and interface called '{marketingCompaniesAccountsDto.AccountsInterface}'");
+            return NotFound($"there is no account interface with subcompany Name '{marketingCompaniesAccountsDto.Subcompany_Name}' and interface called '{marketingCompaniesAccountsDto.AccountsInterface}'");
         }
 
         _context.Entry(new MarketingCompaniesAccounts
@@ -219,21 +219,21 @@ public class MarketingCompaniesAccountsController : ControllerBase
                 return Problem("Entity set 'MySQLDBContext.Tblmarketingcompaniesaccounts'  is null.");
             }
 
-            var marketingCompany = await _context.Tblmarketingcompnies.Where(x => x.Marketing_comany == marketingCompaniesAccountsDto.MarketingCompany).FirstOrDefaultAsync();
+            var marketingCompany = await _context.Tblmarketingcompnies.Where(x => x.Name == marketingCompaniesAccountsDto.MarketingCompany).FirstOrDefaultAsync();
             if (marketingCompany == null)
             {
-                return NotFound($"there is no Marketing Company whith name '{marketingCompaniesAccountsDto.MarketingCompany}'");
+                return NotFound($"there is no Marketing Company whith Name '{marketingCompaniesAccountsDto.MarketingCompany}'");
             }
-            var subcompnay = await _context.Tblsubcompanies.Where(sc => sc.Subcompany_name == marketingCompaniesAccountsDto.Subcompany_Name).FirstOrDefaultAsync();
+            var subcompnay = await _context.Tblsubcompanies.Where(sc => sc.Name == marketingCompaniesAccountsDto.Subcompany_Name).FirstOrDefaultAsync();
             if (subcompnay == null)
             {
-                return NotFound($"there is no subcompany whith name '{marketingCompaniesAccountsDto.Subcompany_Name}'");
+                return NotFound($"there is no subcompany whith Name '{marketingCompaniesAccountsDto.Subcompany_Name}'");
             }
 
             var accountInterface = await _context.Tblaccountsinterfaces.Where(ai => ai.subcompany_id == subcompnay.Id && ai.accounts_interfaces == marketingCompaniesAccountsDto.AccountsInterface).FirstOrDefaultAsync();
             if (accountInterface == null)
             {
-                return NotFound($"there is no account interface with subcompany name '{marketingCompaniesAccountsDto.Subcompany_Name}' and interface called '{marketingCompaniesAccountsDto.AccountsInterface}'");
+                return NotFound($"there is no account interface with subcompany Name '{marketingCompaniesAccountsDto.Subcompany_Name}' and interface called '{marketingCompaniesAccountsDto.AccountsInterface}'");
             }
             _context.Tblmarketingcompaniesaccounts.Add(new MarketingCompaniesAccounts
             {
@@ -264,21 +264,21 @@ public class MarketingCompaniesAccountsController : ControllerBase
             }
             foreach (var marketingCompaniesAccountsDto in marketingCompaniesAccountsDtoList)
             {
-                var marketingCompany = await _context.Tblmarketingcompnies.Where(x => x.Marketing_comany == marketingCompaniesAccountsDto.MarketingCompany).FirstOrDefaultAsync();
+                var marketingCompany = await _context.Tblmarketingcompnies.Where(x => x.Name == marketingCompaniesAccountsDto.MarketingCompany).FirstOrDefaultAsync();
                 if (marketingCompany == null)
                 {
-                    return NotFound($"there is no Marketing Company whith name '{marketingCompaniesAccountsDto.MarketingCompany}'");
+                    return NotFound($"there is no Marketing Company whith Name '{marketingCompaniesAccountsDto.MarketingCompany}'");
                 }
-                var subcompnay = await _context.Tblsubcompanies.Where(sc => sc.Subcompany_name == marketingCompaniesAccountsDto.Subcompany_Name).FirstOrDefaultAsync();
+                var subcompnay = await _context.Tblsubcompanies.Where(sc => sc.Name == marketingCompaniesAccountsDto.Subcompany_Name).FirstOrDefaultAsync();
                 if (subcompnay == null)
                 {
-                    return NotFound($"there is no subcompany whith name '{marketingCompaniesAccountsDto.Subcompany_Name}'");
+                    return NotFound($"there is no subcompany whith Name '{marketingCompaniesAccountsDto.Subcompany_Name}'");
                 }
 
                 var accountInterface = await _context.Tblaccountsinterfaces.Where(ai => ai.subcompany_id == subcompnay.Id && ai.accounts_interfaces == marketingCompaniesAccountsDto.AccountsInterface).FirstOrDefaultAsync();
                 if (accountInterface == null)
                 {
-                    return NotFound($"there is no account interface with subcompany name '{marketingCompaniesAccountsDto.Subcompany_Name}' and interface called '{marketingCompaniesAccountsDto.AccountsInterface}'");
+                    return NotFound($"there is no account interface with subcompany Name '{marketingCompaniesAccountsDto.Subcompany_Name}' and interface called '{marketingCompaniesAccountsDto.AccountsInterface}'");
                 }
                 _context.Tblmarketingcompaniesaccounts.Add(new MarketingCompaniesAccounts
                 {

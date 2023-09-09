@@ -31,12 +31,12 @@ public class TanksController : ControllerBase
             var result = await _context.Tbltanks
                 .Join(_context.TblStations,
                 tank => tank.Station_id,
-                station => station.Station_Id,
+                station => station.Id,
                 (tank, station) => new TankDTO
                 {
                     Tank_No = tank.Tank_No,
                     Tank_Name = tank.Tank_Name,
-                    Station_Name = station.Station_Name,
+                    Station_Name = station.Name,
                     Max_Capacity = tank.Max_Capacity
                 })
                 .ToListAsync();
@@ -58,12 +58,12 @@ public class TanksController : ControllerBase
                 .Where(tank => tank.Tank_No == tankNo)
                 .Join(_context.TblStations,
                 tank => tank.Station_id,
-                station => station.Station_Id,
+                station => station.Id,
                 (tank, station) => new TankDTO
                 {
                     Tank_No = tank.Tank_No,
                     Tank_Name = tank.Tank_Name,
-                    Station_Name = station.Station_Name,
+                    Station_Name = station.Name,
                     Max_Capacity = tank.Max_Capacity
                 })
                 .FirstOrDefaultAsync();
@@ -94,13 +94,13 @@ public class TanksController : ControllerBase
             {
                 return NotFound("the table does not exist in database");
             }
-            var station = _context.TblStations.Where(station => station.Station_Name == stationName).FirstOrDefault();
-            if (station is null) return NotFound($"There is no station with name {stationName}...");
+            var station = _context.TblStations.Where(station => station.Name == stationName).FirstOrDefault();
+            if (station is null) return NotFound($"There is no station with Name {stationName}...");
             var result = await _context.Tbltanks
-                .Where(tank => tank.Station_id == station.Station_Id)
+                .Where(tank => tank.Station_id == station.Id)
                 .Join(_context.TblStations,
                 tank => tank.Station_id,
-                station => station.Station_Id,
+                station => station.Id,
                 (tank, station) => new TankDTO
                 {
                     Tank_No = tank.Tank_No,
@@ -114,7 +114,7 @@ public class TanksController : ControllerBase
             //var tanks = await _stationUnitOfWork.DataAccess.LoadData<TankDTO, string>(sql, stationName);
             //return Ok(tanks);
             //return Ok(_stationUnitOfWork.TankRepository.FindAll(
-            //b => b.Station_id == 1));
+            //b => b.Id == 1));
         }
         catch (Exception ex) { return Problem(ex.ToString()); }
 
@@ -216,31 +216,31 @@ public class TanksController : ControllerBase
 
     private async Task<Dictionary<string, int>> getStationsNameIdPairs()
     {
-        string sql = $"select station_id, Station_Id from tblstations";
+        string sql = $"select station_id, Id from tblstations";
         var stationIdNameList = await _stationUnitOfWork.DataAccess.LoadData<StationIdNamePairs, dynamic>(sql, new { });
 
         Dictionary<string, int> stationMap = stationIdNameList.ToDictionary(
-            s => s.Station_name,
-            s => s.Station_id
+            s => s.Name,
+            s => s.Id
         );
         return stationMap;
     }
 
     private async Task<Dictionary<int, string>> getStationsIdNamePairs()
     {
-        string sql = $"select station_id, Station_Id from tblstations";
+        string sql = $"select station_id, Id from tblstations";
         var stationIdNameList = await _stationUnitOfWork.DataAccess.LoadData<StationIdNamePairs, dynamic>(sql, new { });
 
         Dictionary<int, string> stationMap = stationIdNameList.ToDictionary(
-            s => s.Station_id,
-            s => s.Station_name
+            s => s.Id,
+            s => s.Name
         );
         return stationMap;
     }
 
     private async Task<int> getStationId(string stationName)
     {
-        string sql = $"select station_id from tblstations where Station_Id = '{stationName}'";
+        string sql = $"select station_id from tblstations where Id = '{stationName}'";
         var stationId = await _stationUnitOfWork.DataAccess.LoadData<int, string>(sql, stationName);
         return stationId[0];
     }
