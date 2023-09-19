@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AlemanGroupServices.Core.Models
 {
@@ -11,7 +11,7 @@ namespace AlemanGroupServices.Core.Models
         [Key]
         [Column(Order = 2)]
         [ForeignKey("Station")]
-        public int Station_Id { get; set; }
+        public Guid Station_Id { get; set; }
         [Key]
         [Column(Order = 3)]
         [ForeignKey("tblpumptype")]

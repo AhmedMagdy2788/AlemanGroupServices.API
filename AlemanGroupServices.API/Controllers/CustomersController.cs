@@ -81,7 +81,7 @@ namespace AlemanGroupServices.API.Controllers
                 return Ok(customers);
 
                 //List<int> ids = await getStationCusotmersIds(Id);
-                //return Ok(_stationunitOfWork.CustomerRepository.FindAll(
+                //return Ok(_stationUnitOfWork.CustomerRepository.FindAll(
                 //    b => ids.Contains(b.Id)));
             }
             catch (Exception ex)
@@ -159,8 +159,8 @@ namespace AlemanGroupServices.API.Controllers
         //    try
         //    {
         //        //string sql = "select * from tblstations;";
-        //        //var stations = await _stationunitOfWork.DataAccess.LoadData<Station, dynamic>(sql, new { });
-        //        List<tblCustomersAccounts?> customerAccounts = _stationunitOfWork.CustomersAccountsRepository.FindAll(b => b.Accounts_Interfaces == Id).ToList();
+        //        //var stations = await _stationUnitOfWork.DataAccess.LoadData<Station, dynamic>(sql, new { });
+        //        List<tblCustomersAccounts?> customerAccounts = _stationUnitOfWork.CustomersAccountsRepository.FindAll(b => b.Accounts_Interfaces == Id).ToList();
             
         //        List<int> ids = new();
         //        foreach (var account in customerAccounts)

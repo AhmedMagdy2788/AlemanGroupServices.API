@@ -1,22 +1,22 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AlemanGroupServices.Core.Models
 {
-	public class TanksEquilibrium
-	{
+    public class TanksEquilibrium
+    {
         [Key]
         [Column(Order = 1)]
         public DateTime Date { get; set; }
         [Key]
         [Column(Order = 2)]
         [ForeignKey("Station")]
-        public int Station_Id { get; set; }
+        public Guid Station_Id { get; set; }
         [Key]
         [Column(Order = 3)]
         [ForeignKey("tblpumptype")]
-        public string  Product_Name { get; set; } = null!;
-		public double Quantity { get; set; }
+        public string Product_Name { get; set; } = null!;
+        public double Quantity { get; set; }
         public string? Notes { get; set; }
     }
 

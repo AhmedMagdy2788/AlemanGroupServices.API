@@ -1,8 +1,5 @@
-﻿using AlemanGroupServices.Core.Const;
-using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 
 namespace AlemanGroupServices.Core.Models
 {
@@ -11,7 +8,7 @@ namespace AlemanGroupServices.Core.Models
         [Key] public int Id { get; set; }
         public DateTime Date { get; set; }
         [ForeignKey("Tblstation")]
-        public int StationId { get; set; }
+        public Guid StationId { get; set; }
         [ForeignKey("Tblproduct")]
         public int OilId { get; set; }
         public int Quantity { get; set; }

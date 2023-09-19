@@ -9,26 +9,21 @@ namespace AlemanGroupServices.API.Controllers
     [ApiController]
     public class MarketingCompaniesController : ControllerBase
     {
-        private readonly IStationUnitOfWork _stationunitOfWork;
+        private readonly IStationUnitOfWork _stationUnitOfWork;
         private readonly IMapper _mapper;
         public MarketingCompaniesController(IStationUnitOfWork stationunitOfWork, IMapper mapper)
         {
-            _stationunitOfWork = stationunitOfWork;
+            _stationUnitOfWork = stationunitOfWork;
             _mapper = mapper;
         }
 
         [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
             try
             {
-                return Ok(
-                  _stationunitOfWork.MarketingCompanyRepository
-                  .GetAll()
-                  .Select(MC => _mapper
-                    .Map<MarketingCompanyResponseDto>(MC)
-                   )
-                );
+                var entityList = await _stationUnitOfWork.MarketingCompanyRepository.GetAllAsync();
+                return Ok(entityList.Select(MC => _mapper.Map<MarketingCompanyResponseDto>(MC)));
             }
             catch (Exception ex)
             {
@@ -37,12 +32,12 @@ namespace AlemanGroupServices.API.Controllers
         }
 
         [HttpGet("GetRange")]
-        public IActionResult GetRange(int range, int offset = 0)
+        public async Task<IActionResult> GetRange(int range, int offset = 0)
         {
             try
             {
-                var listMC = _stationunitOfWork.MarketingCompanyRepository.GetRange(range, mc => mc.Name, offset);
-                return Ok(listMC.Select(MC => _mapper.Map<MarketingCompanyResponseDto>(MC)));
+                var entityList = await _stationUnitOfWork.MarketingCompanyRepository.GetRangeAsync(range, mc => mc.Name, offset);
+                return Ok(entityList.Select(MC => _mapper.Map<MarketingCompanyResponseDto>(MC)));
             }
             catch (Exception ex)
             {
@@ -51,17 +46,17 @@ namespace AlemanGroupServices.API.Controllers
         }
 
         [HttpGet("GetByID")]
-        public IActionResult GetByID(Guid id)
+        public async Task<IActionResult> GetByID(Guid id)
         {
             try
             {
-                var mc = _stationunitOfWork.MarketingCompanyRepository.GetById(id);
-                if (mc == null)
+                var entity = await _stationUnitOfWork.MarketingCompanyRepository.GetByIdAsync(id);
+                if (entity == null)
                 {
                     return NotFound($"There is no Marketing Company with id '{id}'.");
                 }
                 return Ok(
-                    _mapper.Map<MarketingCompanyResponseDto>(mc)
+                    _mapper.Map<MarketingCompanyResponseDto>(entity)
                   );
             }
             catch (Exception ex)
@@ -71,19 +66,18 @@ namespace AlemanGroupServices.API.Controllers
         }
 
         [HttpGet("GetByName")]
-        public IActionResult GetByName(string name)
+        public async Task<IActionResult> GetByName(string name)
         {
             try
             {
-                var mc = _stationunitOfWork.MarketingCompanyRepository
-                    .GetAll()
-                    .FirstOrDefault(MC => MC.Name == name);
-                if (mc == null)
+                var entity = await _stationUnitOfWork.MarketingCompanyRepository
+                    .FindAsync(e => e.Name == name);
+                if (entity == null)
                 {
                     return NotFound($"There is no Marketing Company with name '{name}'.");
                 }
                 return Ok(
-                    _mapper.Map<MarketingCompanyResponseDto>(mc)
+                    _mapper.Map<MarketingCompanyResponseDto>(entity)
                   );
             }
             catch (Exception ex)
@@ -93,40 +87,39 @@ namespace AlemanGroupServices.API.Controllers
         }
 
         [HttpGet("GetAllOrderedByName")]
-        public IActionResult GetAllOrderedByName()
+        public async Task<IActionResult> GetAllOrderedByName()
         {
             try
             {
-                return Ok(_stationunitOfWork.MarketingCompanyRepository
-                    .FindAll(b => true, null, null, b => b.Name)
-                    .Select(MC => _mapper.Map<MarketingCompanyResponseDto>(MC)));
+                var entityList = await _stationUnitOfWork.MarketingCompanyRepository.FindAllAsync(b => true, null, null, b => b.Name);
+                return Ok(entityList.Select(MC => _mapper.Map<MarketingCompanyResponseDto>(MC)));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return Problem(ex.Message);
             }
         }
 
         [HttpPost("Add")]
-        public IActionResult AddmarketingCompany([FromBody] MarketingCompanyCreateDto marketingCompany)
+        public async Task<IActionResult> Add([FromBody] MarketingCompanyCreateDto marketingCompany)
         {
             try
             {
-                var MC = _stationunitOfWork.MarketingCompanyRepository.Find(mc => mc.Name == marketingCompany.Name);
-                if (MC != null)
+                var entity = await _stationUnitOfWork.MarketingCompanyRepository.FindAsync(e => e.Name == marketingCompany.Name);
+                if (entity != null)
                 {
                     return BadRequest(_mapper.Map<MarketingCompanyCreateResponseDto>(marketingCompany, opts =>
                     {
                         opts.Items["Id"] = null;
                         opts.Items["Success"] = false;
-                        opts.Items["ErrorMessage"] = $"Error: Marketing Company name  '{MC.Name}' is already exist";
+                        opts.Items["ErrorMessage"] = $"Error: Marketing Company name  '{entity.Name}' is already exist";
                     }));
                 }
-                var marketingCompanyTemp = _stationunitOfWork.MarketingCompanyRepository
+                var createdEntity = _stationUnitOfWork.MarketingCompanyRepository
                     .Add(_mapper
                     .Map<MarketingCompany>(marketingCompany));
-                _stationunitOfWork.complete();
-                return Ok(_mapper.Map<MarketingCompanyCreateResponseDto>(marketingCompanyTemp));
+                _stationUnitOfWork.complete();
+                return Ok(_mapper.Map<MarketingCompanyCreateResponseDto>(createdEntity));
             }
             catch (Exception ex)
             {
@@ -140,7 +133,7 @@ namespace AlemanGroupServices.API.Controllers
         }
 
         [HttpPost("AddRange")]
-        public async Task<IActionResult> AddRangeOfMarketingcompanies([FromBody] List<MarketingCompanyCreateDto> marketingCompanies)
+        public async Task<IActionResult> AddRange([FromBody] List<MarketingCompanyCreateDto> marketingCompanies)
         {
             try
             {
@@ -163,7 +156,7 @@ namespace AlemanGroupServices.API.Controllers
                     }
 
                     // check if the name already exists in the database or in the input list
-                    if (await _stationunitOfWork.MarketingCompanyRepository.AnyAsync(m => m.Name == mc.Name))
+                    if (await _stationUnitOfWork.MarketingCompanyRepository.AnyAsync(m => m.Name == mc.Name))
                     {
                         failList.Add(_mapper.Map<MarketingCompanyCreateResponseDto>(mc, opts =>
                         {
@@ -196,9 +189,9 @@ namespace AlemanGroupServices.API.Controllers
                     }
                 }
 
-                var marketingCompaniesIEnumable = await _stationunitOfWork.MarketingCompanyRepository.AddRangeAsync(successList);
+                var marketingCompaniesIEnumable = await _stationUnitOfWork.MarketingCompanyRepository.AddRangeAsync(successList);
 
-                _stationunitOfWork.complete();
+                _stationUnitOfWork.complete();
 
                 return Ok(
                     new
@@ -223,25 +216,35 @@ namespace AlemanGroupServices.API.Controllers
         }
 
         [HttpPut("Update")]
-        public IActionResult UpdatemarketingCompany(Guid id, [FromBody] MarketingCompanyCreateDto marketingCompany)
+        public async Task<IActionResult> UpdatemarketingCompany(Guid id, [FromBody] MarketingCompanyCreateDto marketingCompany)
         {
             try
             {
-                var mc = _stationunitOfWork.MarketingCompanyRepository.Find(MC => MC.Id == id);
-                if (mc == null)
+                var entity = await _stationUnitOfWork.MarketingCompanyRepository.FindAsync(e => e.Id == id);
+                if (entity == null)
                 {
                     return NotFound($"There is no Marketing Comapny with id '{id}'");
                 }
+                var duplicatedNameEntity = await _stationUnitOfWork.MarketingCompanyRepository.FindAsync(e => e.Name == marketingCompany.Name);
+                if (duplicatedNameEntity != null && duplicatedNameEntity.Id != id)
+                {
+                    return BadRequest(_mapper.Map<MarketingCompanyCreateResponseDto>(marketingCompany, opts =>
+                    {
+                        opts.Items["Id"] = id;
+                        opts.Items["Success"] = false;
+                        opts.Items["ErrorMessage"] = $"Error: Marketing Company name  '{entity.Name}' is already exist";
+                    }));
+                }
 
-                mc.Name = marketingCompany.Name;
-                mc.Address = marketingCompany.Address;
-                mc.Phone = marketingCompany.Phone;
-                mc.Fax = marketingCompany.Fax;
-                mc.Email = marketingCompany.Email;
+                entity.Name = marketingCompany.Name;
+                entity.Address = marketingCompany.Address;
+                entity.Phone = marketingCompany.Phone;
+                entity.Fax = marketingCompany.Fax;
+                entity.Email = marketingCompany.Email;
 
-                _stationunitOfWork.MarketingCompanyRepository.Update(mc);
-                _stationunitOfWork.complete();
-                return Ok(_mapper.Map<MarketingCompanyResponseDto>(mc));
+                _stationUnitOfWork.MarketingCompanyRepository.Update(entity);
+                _stationUnitOfWork.complete();
+                return Ok(_mapper.Map<MarketingCompanyResponseDto>(entity));
             }
             catch (Exception ex)
             {
@@ -250,18 +253,18 @@ namespace AlemanGroupServices.API.Controllers
         }
 
         [HttpDelete("Delete")]
-        public IActionResult DeletemarketingCompany(Guid id)
+        public async Task<IActionResult> DeletemarketingCompany(Guid id)
         {
             try
             {
-                var mc = _stationunitOfWork.MarketingCompanyRepository.Find(MC => MC.Id == id);
-                if (mc == null)
+                var entity = await _stationUnitOfWork.MarketingCompanyRepository.FindAsync(e => e.Id == id);
+                if (entity == null)
                 {
                     return NotFound($"There is no Marketing Comapny with id '{id}'");
                 }
-                _stationunitOfWork.MarketingCompanyRepository.Delete(mc);
-                _stationunitOfWork.complete();
-                return Ok(_mapper.Map<MarketingCompanyResponseDto>(mc));
+                _stationUnitOfWork.MarketingCompanyRepository.Delete(entity);
+                _stationUnitOfWork.complete();
+                return Ok(_mapper.Map<MarketingCompanyResponseDto>(entity));
             }
             catch (Exception ex)
             {

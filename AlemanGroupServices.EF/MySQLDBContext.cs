@@ -108,10 +108,10 @@ public class MySQLDBContext : DbContext
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.Name).IsUnique();
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Name).HasColumnName("Subcompany_Name");
+            entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.Address).HasColumnName("address");
-            entity.Property(e => e.TaxCard).HasColumnName("tax_card");
-            entity.Property(e => e.CommercialRegistration).HasColumnName("commercial_registration");
+            entity.Property(e => e.Tax_Card).HasColumnName("tax_card");
+            entity.Property(e => e.Commercial_Registration).HasColumnName("commercial_registration");
             entity.Property(e => e.Fax).HasColumnName("fax");
             entity.Property(e => e.Email).HasColumnName("email");
         });

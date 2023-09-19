@@ -14,8 +14,8 @@ namespace AlemanGroupServices.Core.Models
         public Guid Id { get; set; }
         public string Name { get; set; } = null!;
         public string Address { get; set; } = null!;
-        public string TaxCard { get; set; } = null!;
-        public string CommercialRegistration { get; set; } = null!;
+        public string Tax_Card { get; set; } = null!;
+        public string Commercial_Registration { get; set; } = null!;
         public string Fax { get; set; } = null!;
         public string Email { get; set; } = null!;
 
@@ -26,8 +26,8 @@ namespace AlemanGroupServices.Core.Models
     {
         public string Name { get; set; } = null!;
         public string Address { get; set; } = null!;
-        public string TaxCard { get; set; } = null!;
-        public string CommercialRegistration { get; set; } = null!;
+        public string Tax_Card { get; set; } = null!;
+        public string Commercial_Registration { get; set; } = null!;
         public string Fax { get; set; } = null!;
         public string Email { get; set; } = null!;
     }
@@ -37,8 +37,8 @@ namespace AlemanGroupServices.Core.Models
         public Guid Id { get; set; }
         public string Name { get; set; } = null!;
         public string Address { get; set; } = null!;
-        public string TaxCard { get; set; } = null!;
-        public string CommercialRegistration { get; set; } = null!;
+        public string Tax_Card { get; set; } = null!;
+        public string Commercial_Registration { get; set; } = null!;
         public string Fax { get; set; } = null!;
         public string Email { get; set; } = null!;
     }
@@ -48,8 +48,8 @@ namespace AlemanGroupServices.Core.Models
         public Guid? Id { get; set; }
         public string Name { get; set; } = null!;
         public string Address { get; set; } = null!;
-        public string TaxCard { get; set; } = null!;
-        public string CommercialRegistration { get; set; } = null!;
+        public string Tax_Card { get; set; } = null!;
+        public string Commercial_Registration { get; set; } = null!;
         public string Fax { get; set; } = null!;
         public string Email { get; set; } = null!;
         public bool Success { get; set; } // indicates if the entity was added successfully
@@ -66,7 +66,13 @@ namespace AlemanGroupServices.Core.Models
 
             CreateMap<Subcompany, SubcompanyResponseDto>();
 
-            // Map from SubcompanyCreateDto to SubcompanyCreateResponseDto
+            // when creation success
+            CreateMap<Subcompany, SubcompanyCreateResponseDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Success, opt => opt.MapFrom(src => true))
+            .ForMember(dest => dest.ErrorMessage, opt => opt.Ignore());
+
+            // Map from SubcompanyCreateDto to SubcompanyCreateResponseDto when there is an error
             CreateMap<SubcompanyCreateDto, SubcompanyCreateResponseDto>()
             // Ignore the Id, Success and ErrorMessage properties as they will be set later
             .ForMember(dest => dest.Id, opt => opt.Ignore())
@@ -79,11 +85,6 @@ namespace AlemanGroupServices.Core.Models
                 dest.Success = (bool)opt.Items["Success"];
                 dest.ErrorMessage = (string)opt.Items["ErrorMessage"];
             });
-
-            CreateMap<Subcompany, SubcompanyCreateResponseDto>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-            .ForMember(dest => dest.Success, opt => opt.MapFrom(src => true))
-            .ForMember(dest => dest.ErrorMessage, opt => opt.Ignore());
         }
     }
 }

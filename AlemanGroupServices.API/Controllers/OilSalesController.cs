@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using AlemanGroupServices.Core.Models;
+﻿using AlemanGroupServices.Core.Models;
 using AlemanGroupServices.EF;
-using System.Reflection.Metadata.Ecma335;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AlemanGroupServices.API.Controllers
 {
@@ -35,7 +34,7 @@ namespace AlemanGroupServices.API.Controllers
                 {
                     Id = oilsSales.Id,
                     Date = oilsSales.Date,
-                    StationName = stations.Station_Name,
+                    StationName = stations.Name,
                     OilName = oils.Product_Name,
                     Quantity = oilsSales.Quantity,
                 })
@@ -62,7 +61,7 @@ namespace AlemanGroupServices.API.Controllers
                 {
                     Id = oilsSales.Id,
                     Date = oilsSales.Date,
-                    StationName = stations.Station_Name,
+                    StationName = stations.Name,
                     OilName = oils.Product_Name,
                     Quantity = oilsSales.Quantity,
                 })
@@ -86,14 +85,14 @@ namespace AlemanGroupServices.API.Controllers
             var oilSaleDtoList = await (
                 from oilsSales in _context.Tbloilssales
                 join stations in _context.TblStations on oilsSales.StationId equals stations.Id
-                where stations.Station_Name == stationName
+                where stations.Name == stationName
                 join oils in _context.TblProducts on oilsSales.OilId equals oils.Id
                 orderby oilsSales.Date
                 select new OilSaleDto
                 {
                     Id = oilsSales.Id,
                     Date = oilsSales.Date,
-                    StationName = stations.Station_Name,
+                    StationName = stations.Name,
                     OilName = oils.Product_Name,
                     Quantity = oilsSales.Quantity,
                 })
@@ -118,14 +117,14 @@ namespace AlemanGroupServices.API.Controllers
                 from oilsSales in _context.Tbloilssales
                 where oilsSales.Date >= startDate && oilsSales.Date <= endDate
                 join stations in _context.TblStations on oilsSales.StationId equals stations.Id
-                where stations.Station_Name == stationName
+                where stations.Name == stationName
                 join oils in _context.TblProducts on oilsSales.OilId equals oils.Id
                 orderby oilsSales.Date
                 select new OilSaleDto
                 {
                     Id = oilsSales.Id,
                     Date = oilsSales.Date,
-                    StationName = stations.Station_Name,
+                    StationName = stations.Name,
                     OilName = oils.Product_Name,
                     Quantity = oilsSales.Quantity,
                 })
@@ -151,10 +150,10 @@ namespace AlemanGroupServices.API.Controllers
             var station = await _context.TblStations.Where(s => s.Name == oilSaleDto.StationName).FirstOrDefaultAsync();
             if (station == null) { return NotFound($"There is no station with Name '{oilSaleDto.StationName}'."); }
 
-            var product = await _context.TblProducts.Where(p=> p.Product_Name == oilSaleDto.OilName).FirstOrDefaultAsync(); 
-            if(product == null) { return NotFound($"There is no prouct with Name '{oilSaleDto.OilName}'"); }
+            var product = await _context.TblProducts.Where(p => p.Product_Name == oilSaleDto.OilName).FirstOrDefaultAsync();
+            if (product == null) { return NotFound($"There is no prouct with Name '{oilSaleDto.OilName}'"); }
 
-            var oilSale = new OilSale 
+            var oilSale = new OilSale
             {
                 Id = id,
                 Date = oilSaleDto.Date,

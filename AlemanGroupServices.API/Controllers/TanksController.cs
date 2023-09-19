@@ -105,7 +105,7 @@ public class TanksController : ControllerBase
                 {
                     Tank_No = tank.Tank_No,
                     Tank_Name = tank.Tank_Name,
-                    Station_Name = station.Station_Name,
+                    Station_Name = station.Name,
                     Max_Capacity = tank.Max_Capacity
                 })
                 .ToListAsync();
@@ -125,7 +125,8 @@ public class TanksController : ControllerBase
     {
         try
         {
-            int stationId = await getStationId(stationName);
+            Guid? stationId = await getStationId(stationName);
+            if (stationId == null) return NotFound($"There is no station with name '{stationName}'");
             return Ok(_stationUnitOfWork.TankRepository.FindAll(b => b.Station_id == stationId
             , null, null, b => b.Tank_Name));
         }
@@ -133,11 +134,16 @@ public class TanksController : ControllerBase
     }
 
     [HttpGet("GetStationTanksOrderedByNo")]
-    public IActionResult GetTanksOrderedByNo(string stationName)
+    public async Task<IActionResult> GetTanksOrderedByNo(string stationName)
     {
         try
         {
-            return Ok(_stationUnitOfWork.TankRepository.FindAll(b => b.Station_id == 1
+            var station = await _stationUnitOfWork.StationRepository.FindAsync(s => s.Name == stationName);
+            if (station == null)
+            {
+                return NotFound($"There is no Staion with name '{stationName}'.");
+            }
+            return Ok(_stationUnitOfWork.TankRepository.FindAll(b => b.Station_id == station.Id
             , null, null, b => b.Tank_No));
         }
         catch (Exception ex) { return Problem(ex.ToString()); }
@@ -148,12 +154,13 @@ public class TanksController : ControllerBase
     {
         try
         {
-            int stationId = await getStationId(tank.Station_Name);
+            Guid? stationId = await getStationId(tank.Station_Name);
+            if (stationId == null) return NotFound($"There is no station with name '{tank.Station_Name}'");
             var tankTemp = _stationUnitOfWork.TankRepository.Add(
                 new Tbltank
                 {
                     Tank_Name = tank.Tank_Name,
-                    Station_id = stationId,
+                    Station_id = stationId ?? Guid.Empty,
                     Max_Capacity = tank.Max_Capacity,
                 });
             _stationUnitOfWork.complete();
@@ -183,13 +190,14 @@ public class TanksController : ControllerBase
     {
         try
         {
-            int stationId = await getStationId(tank.Station_Name);
+            var stationId = await getStationId(tank.Station_Name);
+            if (stationId == null) { return NotFound($"There is no station with name '{tank.Station_Name}'"); }
             var tankTemp = _stationUnitOfWork.TankRepository.Update(new Tbltank
             {
                 Tank_No = tank.Tank_No,
                 Tank_Name = tank.Tank_Name,
                 Max_Capacity = tank.Max_Capacity,
-                Station_id = stationId
+                Station_id = stationId ?? Guid.Empty,
             });
             _stationUnitOfWork.complete();
             return Ok(tankTemp);
@@ -214,34 +222,34 @@ public class TanksController : ControllerBase
         catch (Exception ex) { return Problem(ex.ToString()); }
     }
 
-    private async Task<Dictionary<string, int>> getStationsNameIdPairs()
+    private async Task<Dictionary<string, Guid>> getStationsNameIdPairs()
     {
         string sql = $"select station_id, Id from tblstations";
         var stationIdNameList = await _stationUnitOfWork.DataAccess.LoadData<StationIdNamePairs, dynamic>(sql, new { });
 
-        Dictionary<string, int> stationMap = stationIdNameList.ToDictionary(
+        Dictionary<string, Guid> stationMap = stationIdNameList.ToDictionary(
             s => s.Name,
             s => s.Id
         );
         return stationMap;
     }
 
-    private async Task<Dictionary<int, string>> getStationsIdNamePairs()
+    private async Task<Dictionary<Guid, string>> getStationsIdNamePairs()
     {
         string sql = $"select station_id, Id from tblstations";
         var stationIdNameList = await _stationUnitOfWork.DataAccess.LoadData<StationIdNamePairs, dynamic>(sql, new { });
 
-        Dictionary<int, string> stationMap = stationIdNameList.ToDictionary(
+        Dictionary<Guid, string> stationMap = stationIdNameList.ToDictionary(
             s => s.Id,
             s => s.Name
         );
         return stationMap;
     }
 
-    private async Task<int> getStationId(string stationName)
+    private async Task<Guid?> getStationId(string stationName)
     {
-        string sql = $"select station_id from tblstations where Id = '{stationName}'";
-        var stationId = await _stationUnitOfWork.DataAccess.LoadData<int, string>(sql, stationName);
-        return stationId[0];
+        var station = await _stationUnitOfWork.StationRepository.FindAsync(s => s.Name == stationName);
+        if (station == null) return null;
+        return station.Id;
     }
 }
